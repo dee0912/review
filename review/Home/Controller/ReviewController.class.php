@@ -27,35 +27,35 @@ class ReviewController extends Controller{
 		if($member_id == ""){
 			
 			$error = 1;
-			exit(json_encode(array("error"=>$error)));
+			exit(json_encode($error));
 		}
 				
 		//订单id为空
 		if($order_id == ""){
 			
 			$error = 2;
-			exit(json_encode(array("error"=>$error)));
+			exit(json_encode($error));
 		}
 		
 		//评论为空
 		if($comment == ""){
 			 
 			$error = 3;
-			exit(json_encode(array("error"=>$error)));
+			exit(json_encode($error));
 		}
 		
 		//商品id为空
 		if($product_id == ""){
 		
 			$error = 4;
-			exit(json_encode(array("error"=>$error)));
+			exit(json_encode($error));
 		}
 		
 		//商品销售属性为空
 		if($sale_prop == ""){
 			
 			$error = 5;
-			exit(json_encode(array("error"=>$error)));
+			exit(json_encode($error));
 		}
 		
 
@@ -66,7 +66,7 @@ class ReviewController extends Controller{
 			
 			//查询不到订单时间
 			$error = 2;
-			exit(json_encode(array("error"=>$error)));
+			exit(json_encode($error));
 			
 		}else{
 			
@@ -92,17 +92,17 @@ class ReviewController extends Controller{
 			if($tagObj->data($tagData)->add()){
 				
 				$flag = 1; //添加成功		
-				exit(json_encode(array("flag"=>$flag)));
+				exit(json_encode($flag));
 			}else{
 			
 				$flag = 0;//添加失败
-				exit(json_encode(array("flag"=>$flag)));
+				exit(json_encode($flag));
 			}
 				
 		}else{
 			
 			$flag = 0;//添加失败
-			exit(json_encode(array("flag"=>$flag)));
+			exit(json_encode($flag));
 		}
 			
 	}
@@ -137,7 +137,7 @@ class ReviewController extends Controller{
 
 	    	//上传失败
 	    	$error = 3;
-			exit(json_encode(array("error"=>$error)));    
+			exit(json_encode($error));    
 	    
 	    }else{
 	    	
@@ -146,28 +146,28 @@ class ReviewController extends Controller{
 			if($member_id == ""){
 				
 				$error = 1;
-				exit(json_encode(array("error"=>$error)));
+				exit(json_encode($error));
 			}
 					
 			//订单id为空
 			if($order_id == ""){
 				
 				$error = 2;
-				exit(json_encode(array("error"=>$error)));
+				exit(json_encode($error));
 			}
 			
 			//商品id为空
 			if($product_id == ""){
 			
 				$error = 4;
-				exit(json_encode(array("error"=>$error)));
+				exit(json_encode($error));
 			}
 			
 			//商品销售属性为空
 			if($sale_prop == ""){
 				
 				$error = 5;
-				exit(json_encode(array("error"=>$error)));
+				exit(json_encode($error));
 			}
 			
 
@@ -213,12 +213,12 @@ class ReviewController extends Controller{
 	 
 	       		
        		 	$flag = 1; //添加成功		
-				exit(json_encode(array("flag"=>$flag)));
+				exit(json_encode($flag));
 					
 			}else{
 				
 				$flag = 0;//添加失败
-				exit(json_encode(array("flag"=>$flag)));
+				exit(json_encode($flag));
 			}			    	
 			
 	    }
@@ -245,14 +245,14 @@ class ReviewController extends Controller{
 		if($reviewCount  == 0){
 	
 			$error = 1;
-			exit(json_encode(array("error"=>$error)));
+			exit(json_encode($error));
 		}		
 		
 		//管理员回复为空
 		if($reply  == ""){
 		
 			$error = 2;
-			exit(json_encode(array("error"=>$error)));
+			exit(json_encode($error));
 		}
 		
 
@@ -261,12 +261,12 @@ class ReviewController extends Controller{
 		if($replyObj->where("review_id=".$review_id)->save($data)){
 			
 			    $flag = 1; //回复成功		
-				exit(json_encode(array("flag"=>$flag)));
+				exit(json_encode($flag));
 				
 		}else{
 			
 				$flag = 0; //回复失败		
-				exit(json_encode(array("flag"=>$flag)));
+				exit(json_encode($flag));
 		}
 		
 	}
@@ -354,21 +354,21 @@ public function getReview(){
 	if(!isset($_GET['product_id']) && $_GET['product_id'] == ""){
 		
 		$error = 1;
-		exit(json_encode(array("error"=>$error)));
+		exit(json_encode($error));
 	}
 	
 	//用户id有误
 	if(!isset($_GET['member_id']) && $_GET['member_id'] == ""){
 		
 		$error = 2;
-		exit(json_encode(array("error"=>$error)));
+		exit(json_encode($error));
 	}
 	
 	//订单id有误
 	if(!isset($_GET['order_id']) && $_GET['order_id'] == ""){
 		
 		$error = 3;
-		exit(json_encode(array("error"=>$error)));
+		exit(json_encode($error));
 	}
 	
 	$where = "product_id=".$product_id."&&member_id=".$member_id."&&order_id=".$order_id;
@@ -411,14 +411,14 @@ public function UpdateStatus(){
 		if($reviewCount  == 0){
 	
 			$error = 1;
-			exit(json_encode(array("error"=>$error)));
+			exit(json_encode($error));
 		}		
 		
 		//is_enabled值有误
 		if($is_enabled  == "" || $is_enabled>1 || $is_enabled<0){
 		
 			$error = 2;
-			exit(json_encode(array("error"=>$error)));
+			exit(json_encode($error));
 		}
 		
 
@@ -427,12 +427,12 @@ public function UpdateStatus(){
 		if($replyObj->where("review_id=".$review_id)->save($data)){
 			
 			    $flag = 1; //启用/禁用成功		
-				exit(json_encode(array("flag"=>$flag)));
+				exit(json_encode($flag));
 				
 		}else{
 			
 				$flag = 0; //启用/禁用失败	
-				exit(json_encode(array("flag"=>$flag)));
+				exit(json_encode($flag));
 		}	
 }
 	
@@ -455,26 +455,26 @@ public function UpdateStatusShow(){
 		if($showCount  == 0){
 	
 			$error = 1;
-			exit(json_encode(array("error"=>$error)));
+			exit(json_encode($error));
 		}		
 		
 		//is_enabled值有误
 		if($is_enabled  == "" || $is_enabled>1 || $is_enabled<0){
 		
 			$error = 2;
-			exit(json_encode(array("error"=>$error)));
+			exit(json_encode($error));
 		}
 		
 		$showObj->create();
 		if($showObj->where("show_id=".$show_id)->save($data)){
 			
 			    $flag = 1; //启用/禁用成功		
-				exit(json_encode(array("flag"=>$flag)));
+				exit(json_encode($flag));
 				
 		}else{
 			
 				$flag = 0; //启用/禁用失败	
-				exit(json_encode(array("flag"=>$flag)));
+				exit(json_encode($flag));
 		}	
 }
 }
