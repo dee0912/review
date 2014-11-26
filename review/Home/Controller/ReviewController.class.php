@@ -331,12 +331,12 @@ public function getList(){
 			if($showObj->count()>0){
 				
 				$flag = 2;
-				exit(json_encode(array( "review"=>$rows,"flag"=>$flag)));
+				exit(json_encode(array( "show"=>$rows,"flag"=>$flag)));
 			
 			}else{
 			
 				$flag = 1;
-				exit(json_encode(array( "review"=>$rows,"flag"=>$flag)));
+				exit(json_encode(array( "show"=>$rows,"flag"=>$flag)));
 			}
 			
 		}
