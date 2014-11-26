@@ -328,7 +328,7 @@ public function getList(){
 			$showObj = D("Order_show");
 			$rows = $showObj->where($where)->select();
 			
-			if($reviewObj->count()>0){
+			if($showObj->count()>0){
 				
 				$flag = 2;
 				exit(json_encode(array( "review"=>$rows,"flag"=>$flag)));
