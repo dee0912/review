@@ -279,28 +279,28 @@ public function getList(){
 	//$where = "";
 	
 	//接收get参数
-	if(isset(I('product_id'))){
+	if(isset($_GET['product_id'])){
 		
 		//商品id
 		$product_id = I('product_id');
 		$where = " product_id=".$product_id;
 	}
 
-	if(isset(I('member_id'))){
+	if(isset($_GET['member_id'])){
 		
 		//用户id
 		$member_id = I('member_id');
 		$where = " member_id=".$member_id;
 	}
 	
-	if(isset(I('is_enabled'))){
+	if(isset($_GET['is_enabled'])){
 		
 		//是否启用 1- 启用 0-禁用
 		$is_enabled = I('is_enabled');
 		$where = " is_enabled=".$is_enabled;
 	}
 	
-	if(isset(I('has_ordershow'))){
+	if(isset($_GET['has_ordershow'])){
 		
 		//是否含有晒单  1-含 0-不含
 		$has_ordershow = I('has_ordershow');
@@ -351,21 +351,21 @@ public function getList(){
 public function getReview(){
 	
 	//商品id有误
-	if(!isset(I('product_id')) && I('product_id') == ""){
+	if(!isset($_GET['product_id']) && $_GET['product_id'] == ""){
 		
 		$error = 1;
 		exit(json_encode($error));
 	}
 	
 	//用户id有误
-	if(!isset(I('member_id')) && I('member_id') == ""){
+	if(!isset($_GET['member_id']) && $_GET['member_id'] == ""){
 		
 		$error = 2;
 		exit(json_encode($error));
 	}
 	
 	//订单id有误
-	if(!isset(I('order_id')) && I('order_id') == ""){
+	if(!isset($_GET['order_id']) && $_GET['order_id'] == ""){
 		
 		$error = 3;
 		exit(json_encode($error));
