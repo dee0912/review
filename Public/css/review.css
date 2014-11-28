@@ -1,0 +1,9 @@
+.set-enabled{
+
+	cursor:pointer;
+}
+
+.set-enabled:hover{
+
+	color:red;
+}
