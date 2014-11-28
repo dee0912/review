@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50173
 File Encoding         : 65001
 
-Date: 2014-11-26 10:07:21
+Date: 2014-11-28 18:51:42
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -44,7 +44,7 @@ CREATE TABLE `order_show` (
   `creation_time` datetime NOT NULL COMMENT '晒单时间',
   `modification_time` datetime NOT NULL COMMENT '晒单修改时间',
   PRIMARY KEY (`show_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of order_show
@@ -84,12 +84,67 @@ INSERT INTO `order_show` VALUES ('32', '200100100', '100100', '3001001001', 'tes
 INSERT INTO `order_show` VALUES ('33', '200100100', '100100', '3001001001', 'testtttt', '1', '2014-11-25 15:58:21', '0000-00-00 00:00:00');
 INSERT INTO `order_show` VALUES ('34', '200100100', '100100', '3001001001', 'testtttt', '1', '2014-11-25 15:58:59', '0000-00-00 00:00:00');
 INSERT INTO `order_show` VALUES ('35', '200100100', '100100', '3001001001', 'testtttt', '1', '2014-11-25 16:00:20', '0000-00-00 00:00:00');
+INSERT INTO `order_show` VALUES ('36', '200100100', '100100', '3001001001', 'testtttt', '1', '2014-11-28 18:10:00', '0000-00-00 00:00:00');
 
 -- ----------------------------
 -- Table structure for order_show_pic
 -- ----------------------------
 DROP TABLE IF EXISTS `order_show_pic`;
 CREATE TABLE `order_show_pic` (
+  `pic_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '晒单单张图片id',
+  `review_id` int(11) NOT NULL COMMENT '晒单id',
+  `url` varchar(256) NOT NULL COMMENT '晒单单张图片url',
+  `priority` int(11) NOT NULL DEFAULT '1' COMMENT '晒单单张图片顺序',
+  `is_enabled` int(11) NOT NULL DEFAULT '1' COMMENT '单张图片是否显示 0-不显示 1-显示',
+  `creation_time` datetime NOT NULL COMMENT '单张图片添加时间',
+  `modification_time` datetime NOT NULL COMMENT '单张图片修改时间',
+  PRIMARY KEY (`pic_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=71 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of order_show_pic
+-- ----------------------------
+INSERT INTO `order_show_pic` VALUES ('1', '1', './Uploads/2014-11-25/54742fdfd10d5.jpg', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic` VALUES ('2', '17', './Uploads/2014-11-25/54743028844f4.jpg', '1', '1', '2014-11-25 15:30:48', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic` VALUES ('3', '17', './Uploads/2014-11-25/5474302885db0.jpg', '1', '1', '2014-11-25 15:30:48', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic` VALUES ('4', '17', './Uploads/2014-11-25/5474302887109.jpg', '1', '1', '2014-11-25 15:30:48', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic` VALUES ('5', '2', './Uploads/2014-11-25/547433ea29a38.jpg', '1', '1', '2014-11-25 15:46:50', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic` VALUES ('6', '2', './Uploads/2014-11-25/547433ea2b4e4.jpg', '1', '1', '2014-11-25 15:46:50', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic` VALUES ('7', '3', './Uploads/2014-11-25/547433ea2c61b.jpg', '1', '1', '2014-11-25 15:46:50', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic` VALUES ('8', '3', './Uploads/2014-11-25/54743450c089e.jpg', '0', '1', '2014-11-25 15:48:32', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic` VALUES ('32', '3', './Uploads/2014-11-25/547435ed495ac.jpg', '1', '1', '2014-11-25 15:55:25', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic` VALUES ('33', '4', './Uploads/2014-11-25/547435ed4aad5.jpg', '1', '1', '2014-11-25 15:55:25', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic` VALUES ('34', '5', './Uploads/2014-11-25/547435ed4c253.jpg', '1', '1', '2014-11-25 15:55:25', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic` VALUES ('35', '5', './Uploads/2014-11-25/547435fe2c312.jpg', '1', '1', '2014-11-25 15:55:42', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic` VALUES ('36', '5', './Uploads/2014-11-25/547435fe2d5d5.jpg', '1', '1', '2014-11-25 15:55:42', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic` VALUES ('37', '6', './Uploads/2014-11-25/547435fe2edde.jpg', '1', '1', '2014-11-25 15:55:42', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic` VALUES ('38', '7', './Uploads/2014-11-25/5474360e57aea.jpg', '1', '1', '2014-11-25 15:55:58', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic` VALUES ('39', '8', './Uploads/2014-11-25/5474360e5a1c6.jpg', '68', '1', '2014-11-25 15:55:58', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic` VALUES ('40', '8', './Uploads/2014-11-25/5474360e5c7a9.jpg', '44', '1', '2014-11-25 15:55:58', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic` VALUES ('41', '8', './Uploads/2014-11-25/5474361ea8b80.jpg', '0', '1', '2014-11-25 15:56:14', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic` VALUES ('42', '8', './Uploads/2014-11-25/5474361eaa864.jpg', '0', '1', '2014-11-25 15:56:14', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic` VALUES ('43', '8', './Uploads/2014-11-25/5474361eabe30.jpg', '0', '1', '2014-11-25 15:56:14', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic` VALUES ('44', '9', './Uploads/2014-11-25/547436c3511c1.jpg', '0', '1', '2014-11-25 15:58:59', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic` VALUES ('45', '9', './Uploads/2014-11-25/547436c35289a.jpg', '0', '1', '2014-11-25 15:58:59', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic` VALUES ('46', '9', './Uploads/2014-11-25/547436c353da9.jpg', '0', '1', '2014-11-25 15:58:59', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic` VALUES ('47', '9', './Uploads/2014-11-25/54743714c1b0b.jpg', '1', '1', '2014-11-25 16:00:20', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic` VALUES ('48', '10', './Uploads/2014-11-25/54743714c33db.jpg', '1', '1', '2014-11-25 16:00:20', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic` VALUES ('49', '10', './Uploads/2014-11-25/54743714c4bb2.jpg', '1', '1', '2014-11-25 16:00:20', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic` VALUES ('62', '200100105', '/Uploads/2014-11-28/54784ff477dac.jpg', '1', '1', '2014-11-28 18:35:32', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic` VALUES ('63', '200100105', '/Uploads/2014-11-28/54784ff479dc3.jpg', '1', '1', '2014-11-28 18:35:32', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic` VALUES ('64', '200100105', '/Uploads/2014-11-28/54784ff47bb71.jpg', '1', '1', '2014-11-28 18:35:32', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic` VALUES ('65', '200100106', '/Uploads/2014-11-28/5478502cf192e.jpg', '1', '1', '2014-11-28 18:36:29', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic` VALUES ('66', '200100106', '/Uploads/2014-11-28/5478502cf2fb8.jpg', '1', '1', '2014-11-28 18:36:29', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic` VALUES ('67', '200100106', '/Uploads/2014-11-28/5478502d005c8.jpg', '1', '1', '2014-11-28 18:36:29', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic` VALUES ('68', '200100107', '2014-11-28/5478509eab7ae.jpg', '1', '1', '2014-11-28 18:38:22', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic` VALUES ('69', '200100107', '2014-11-28/5478509eac865.jpg', '1', '1', '2014-11-28 18:38:22', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic` VALUES ('70', '200100107', '2014-11-28/5478509eadd03.jpg', '1', '1', '2014-11-28 18:38:22', '0000-00-00 00:00:00');
+
+-- ----------------------------
+-- Table structure for order_show_pic_bak
+-- ----------------------------
+DROP TABLE IF EXISTS `order_show_pic_bak`;
+CREATE TABLE `order_show_pic_bak` (
   `pic_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '晒单单张图片id',
   `show_id` int(11) NOT NULL COMMENT '晒单id',
   `url` varchar(256) NOT NULL COMMENT '晒单单张图片url',
@@ -99,38 +154,38 @@ CREATE TABLE `order_show_pic` (
   `modification_time` datetime NOT NULL COMMENT '单张图片修改时间',
   PRIMARY KEY (`pic_id`),
   KEY `show_id` (`show_id`) USING BTREE,
-  CONSTRAINT `order_show_pic_ibfk_1` FOREIGN KEY (`show_id`) REFERENCES `order_show` (`show_id`)
+  CONSTRAINT `order_show_pic_bak_ibfk_1` FOREIGN KEY (`show_id`) REFERENCES `order_show` (`show_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of order_show_pic
+-- Records of order_show_pic_bak
 -- ----------------------------
-INSERT INTO `order_show_pic` VALUES ('1', '15', './Uploads/2014-11-25/54742fdfd10d5.jpg', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00');
-INSERT INTO `order_show_pic` VALUES ('2', '17', './Uploads/2014-11-25/54743028844f4.jpg', '1', '1', '2014-11-25 15:30:48', '0000-00-00 00:00:00');
-INSERT INTO `order_show_pic` VALUES ('3', '17', './Uploads/2014-11-25/5474302885db0.jpg', '1', '1', '2014-11-25 15:30:48', '0000-00-00 00:00:00');
-INSERT INTO `order_show_pic` VALUES ('4', '17', './Uploads/2014-11-25/5474302887109.jpg', '1', '1', '2014-11-25 15:30:48', '0000-00-00 00:00:00');
-INSERT INTO `order_show_pic` VALUES ('5', '18', './Uploads/2014-11-25/547433ea29a38.jpg', '1', '1', '2014-11-25 15:46:50', '0000-00-00 00:00:00');
-INSERT INTO `order_show_pic` VALUES ('6', '18', './Uploads/2014-11-25/547433ea2b4e4.jpg', '1', '1', '2014-11-25 15:46:50', '0000-00-00 00:00:00');
-INSERT INTO `order_show_pic` VALUES ('7', '18', './Uploads/2014-11-25/547433ea2c61b.jpg', '1', '1', '2014-11-25 15:46:50', '0000-00-00 00:00:00');
-INSERT INTO `order_show_pic` VALUES ('8', '20', './Uploads/2014-11-25/54743450c089e.jpg', '0', '1', '2014-11-25 15:48:32', '0000-00-00 00:00:00');
-INSERT INTO `order_show_pic` VALUES ('32', '29', './Uploads/2014-11-25/547435ed495ac.jpg', '1', '1', '2014-11-25 15:55:25', '0000-00-00 00:00:00');
-INSERT INTO `order_show_pic` VALUES ('33', '29', './Uploads/2014-11-25/547435ed4aad5.jpg', '1', '1', '2014-11-25 15:55:25', '0000-00-00 00:00:00');
-INSERT INTO `order_show_pic` VALUES ('34', '29', './Uploads/2014-11-25/547435ed4c253.jpg', '1', '1', '2014-11-25 15:55:25', '0000-00-00 00:00:00');
-INSERT INTO `order_show_pic` VALUES ('35', '30', './Uploads/2014-11-25/547435fe2c312.jpg', '1', '1', '2014-11-25 15:55:42', '0000-00-00 00:00:00');
-INSERT INTO `order_show_pic` VALUES ('36', '30', './Uploads/2014-11-25/547435fe2d5d5.jpg', '1', '1', '2014-11-25 15:55:42', '0000-00-00 00:00:00');
-INSERT INTO `order_show_pic` VALUES ('37', '30', './Uploads/2014-11-25/547435fe2edde.jpg', '1', '1', '2014-11-25 15:55:42', '0000-00-00 00:00:00');
-INSERT INTO `order_show_pic` VALUES ('38', '31', './Uploads/2014-11-25/5474360e57aea.jpg', '1', '1', '2014-11-25 15:55:58', '0000-00-00 00:00:00');
-INSERT INTO `order_show_pic` VALUES ('39', '31', './Uploads/2014-11-25/5474360e5a1c6.jpg', '68', '1', '2014-11-25 15:55:58', '0000-00-00 00:00:00');
-INSERT INTO `order_show_pic` VALUES ('40', '31', './Uploads/2014-11-25/5474360e5c7a9.jpg', '44', '1', '2014-11-25 15:55:58', '0000-00-00 00:00:00');
-INSERT INTO `order_show_pic` VALUES ('41', '32', './Uploads/2014-11-25/5474361ea8b80.jpg', '0', '1', '2014-11-25 15:56:14', '0000-00-00 00:00:00');
-INSERT INTO `order_show_pic` VALUES ('42', '32', './Uploads/2014-11-25/5474361eaa864.jpg', '0', '1', '2014-11-25 15:56:14', '0000-00-00 00:00:00');
-INSERT INTO `order_show_pic` VALUES ('43', '32', './Uploads/2014-11-25/5474361eabe30.jpg', '0', '1', '2014-11-25 15:56:14', '0000-00-00 00:00:00');
-INSERT INTO `order_show_pic` VALUES ('44', '34', './Uploads/2014-11-25/547436c3511c1.jpg', '0', '1', '2014-11-25 15:58:59', '0000-00-00 00:00:00');
-INSERT INTO `order_show_pic` VALUES ('45', '34', './Uploads/2014-11-25/547436c35289a.jpg', '0', '1', '2014-11-25 15:58:59', '0000-00-00 00:00:00');
-INSERT INTO `order_show_pic` VALUES ('46', '34', './Uploads/2014-11-25/547436c353da9.jpg', '0', '1', '2014-11-25 15:58:59', '0000-00-00 00:00:00');
-INSERT INTO `order_show_pic` VALUES ('47', '35', './Uploads/2014-11-25/54743714c1b0b.jpg', '1', '1', '2014-11-25 16:00:20', '0000-00-00 00:00:00');
-INSERT INTO `order_show_pic` VALUES ('48', '35', './Uploads/2014-11-25/54743714c33db.jpg', '1', '1', '2014-11-25 16:00:20', '0000-00-00 00:00:00');
-INSERT INTO `order_show_pic` VALUES ('49', '35', './Uploads/2014-11-25/54743714c4bb2.jpg', '1', '1', '2014-11-25 16:00:20', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic_bak` VALUES ('1', '15', './Uploads/2014-11-25/54742fdfd10d5.jpg', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic_bak` VALUES ('2', '17', './Uploads/2014-11-25/54743028844f4.jpg', '1', '1', '2014-11-25 15:30:48', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic_bak` VALUES ('3', '17', './Uploads/2014-11-25/5474302885db0.jpg', '1', '1', '2014-11-25 15:30:48', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic_bak` VALUES ('4', '17', './Uploads/2014-11-25/5474302887109.jpg', '1', '1', '2014-11-25 15:30:48', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic_bak` VALUES ('5', '18', './Uploads/2014-11-25/547433ea29a38.jpg', '1', '1', '2014-11-25 15:46:50', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic_bak` VALUES ('6', '18', './Uploads/2014-11-25/547433ea2b4e4.jpg', '1', '1', '2014-11-25 15:46:50', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic_bak` VALUES ('7', '18', './Uploads/2014-11-25/547433ea2c61b.jpg', '1', '1', '2014-11-25 15:46:50', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic_bak` VALUES ('8', '20', './Uploads/2014-11-25/54743450c089e.jpg', '0', '1', '2014-11-25 15:48:32', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic_bak` VALUES ('32', '29', './Uploads/2014-11-25/547435ed495ac.jpg', '1', '1', '2014-11-25 15:55:25', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic_bak` VALUES ('33', '29', './Uploads/2014-11-25/547435ed4aad5.jpg', '1', '1', '2014-11-25 15:55:25', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic_bak` VALUES ('34', '29', './Uploads/2014-11-25/547435ed4c253.jpg', '1', '1', '2014-11-25 15:55:25', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic_bak` VALUES ('35', '30', './Uploads/2014-11-25/547435fe2c312.jpg', '1', '1', '2014-11-25 15:55:42', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic_bak` VALUES ('36', '30', './Uploads/2014-11-25/547435fe2d5d5.jpg', '1', '1', '2014-11-25 15:55:42', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic_bak` VALUES ('37', '30', './Uploads/2014-11-25/547435fe2edde.jpg', '1', '1', '2014-11-25 15:55:42', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic_bak` VALUES ('38', '31', './Uploads/2014-11-25/5474360e57aea.jpg', '1', '1', '2014-11-25 15:55:58', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic_bak` VALUES ('39', '31', './Uploads/2014-11-25/5474360e5a1c6.jpg', '68', '1', '2014-11-25 15:55:58', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic_bak` VALUES ('40', '31', './Uploads/2014-11-25/5474360e5c7a9.jpg', '44', '1', '2014-11-25 15:55:58', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic_bak` VALUES ('41', '32', './Uploads/2014-11-25/5474361ea8b80.jpg', '0', '1', '2014-11-25 15:56:14', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic_bak` VALUES ('42', '32', './Uploads/2014-11-25/5474361eaa864.jpg', '0', '1', '2014-11-25 15:56:14', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic_bak` VALUES ('43', '32', './Uploads/2014-11-25/5474361eabe30.jpg', '0', '1', '2014-11-25 15:56:14', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic_bak` VALUES ('44', '34', './Uploads/2014-11-25/547436c3511c1.jpg', '0', '1', '2014-11-25 15:58:59', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic_bak` VALUES ('45', '34', './Uploads/2014-11-25/547436c35289a.jpg', '0', '1', '2014-11-25 15:58:59', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic_bak` VALUES ('46', '34', './Uploads/2014-11-25/547436c353da9.jpg', '0', '1', '2014-11-25 15:58:59', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic_bak` VALUES ('47', '35', './Uploads/2014-11-25/54743714c1b0b.jpg', '1', '1', '2014-11-25 16:00:20', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic_bak` VALUES ('48', '35', './Uploads/2014-11-25/54743714c33db.jpg', '1', '1', '2014-11-25 16:00:20', '0000-00-00 00:00:00');
+INSERT INTO `order_show_pic_bak` VALUES ('49', '35', './Uploads/2014-11-25/54743714c4bb2.jpg', '1', '1', '2014-11-25 16:00:20', '0000-00-00 00:00:00');
 
 -- ----------------------------
 -- Table structure for product
@@ -179,7 +234,7 @@ CREATE TABLE `review` (
   `creation_time` datetime NOT NULL COMMENT '评论时间',
   `modification_time` datetime NOT NULL COMMENT '管理员回复时间',
   PRIMARY KEY (`review_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=200100108 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of review
@@ -200,7 +255,50 @@ INSERT INTO `review` VALUES ('13', '100100', '分', '', '2', '200100100', '2014-
 INSERT INTO `review` VALUES ('14', '100100', 'QQ群', '', '2', '200100100', '2014-11-25 11:58:39', '3001001001', 'testtttt', '1', '2014-11-25 12:02:56', '0000-00-00 00:00:00');
 INSERT INTO `review` VALUES ('15', '100100', 'lskk\"\";asda\\\\\';l\'a;s', '', '5', '200100100', '2014-11-25 11:58:39', '3001001001', 'testtttt', '1', '2014-11-25 13:43:54', '0000-00-00 00:00:00');
 INSERT INTO `review` VALUES ('16', '100100', '1111', '', '3', '200100100', '2014-11-25 11:58:39', '3001001001', 'testtttt', '1', '2014-11-25 13:50:42', '0000-00-00 00:00:00');
-INSERT INTO `review` VALUES ('17', '100100', 'asd\\sad\'ddsdf', '的顶顶顶顶顶', '4', '200100100', '2014-11-25 11:58:39', '3001001001', 'testtttt', '0', '2014-11-25 13:51:06', '0000-00-00 00:00:00');
+INSERT INTO `review` VALUES ('17', '100100', '1asd\\sad\'ddsdf', '的顶顶顶顶顶', '4', '200100100', '2014-11-25 11:58:39', '3001001001', 'testtttt', '0', '2014-11-25 13:51:06', '0000-00-00 00:00:00');
+INSERT INTO `review` VALUES ('18', '100100', '', '', '5', '200100100', '0000-00-00 00:00:00', '3001001001', 'testtttt', '1', '2014-11-28 18:35:32', '0000-00-00 00:00:00');
+INSERT INTO `review` VALUES ('200100107', '100100', '', '', '5', '200100100', '0000-00-00 00:00:00', '3001001001', 'testtttt', '1', '2014-11-28 18:38:22', '0000-00-00 00:00:00');
+
+-- ----------------------------
+-- Table structure for review_bak
+-- ----------------------------
+DROP TABLE IF EXISTS `review_bak`;
+CREATE TABLE `review_bak` (
+  `review_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '评论id',
+  `member_id` bigint(20) NOT NULL COMMENT '用户id',
+  `comment` varchar(1024) NOT NULL DEFAULT '' COMMENT '评论内容',
+  `reply` varchar(1024) NOT NULL DEFAULT '' COMMENT '管理员回复内容',
+  `score` int(11) NOT NULL DEFAULT '5' COMMENT '用户评分',
+  `order_id` bigint(20) NOT NULL COMMENT '订单编号',
+  `order_time` datetime NOT NULL COMMENT '订单下单时间',
+  `product_id` bigint(11) NOT NULL COMMENT '评价的商品id',
+  `sale_prop` varchar(512) NOT NULL DEFAULT '' COMMENT '评价的商品',
+  `is_enabled` int(11) NOT NULL DEFAULT '1' COMMENT '是否启用 0-禁用 1-启用',
+  `creation_time` datetime NOT NULL COMMENT '评论时间',
+  `modification_time` datetime NOT NULL COMMENT '管理员回复时间',
+  PRIMARY KEY (`review_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of review_bak
+-- ----------------------------
+INSERT INTO `review_bak` VALUES ('1', '100100', '', '', '1', '200100100', '0000-00-00 00:00:00', '3001001001', 'testtttt', '1', '2014-11-25 10:46:15', '0000-00-00 00:00:00');
+INSERT INTO `review_bak` VALUES ('2', '100100', '222', '', '1', '200100100', '0000-00-00 00:00:00', '3001001001', 'testtttt', '1', '2014-11-25 10:53:01', '0000-00-00 00:00:00');
+INSERT INTO `review_bak` VALUES ('3', '100100', '11', '', '5', '200100100', '0000-00-00 00:00:00', '3001001001', 'testtttt', '1', '2014-11-25 10:53:19', '0000-00-00 00:00:00');
+INSERT INTO `review_bak` VALUES ('4', '100100', '111', '', '1', '200100100', '0000-00-00 00:00:00', '3001001001', 'testtttt', '1', '2014-11-25 11:26:53', '0000-00-00 00:00:00');
+INSERT INTO `review_bak` VALUES ('5', '100100', '11', '', '1', '200100100', '0000-00-00 00:00:00', '3001001001', 'testtttt', '1', '2014-11-25 11:35:55', '0000-00-00 00:00:00');
+INSERT INTO `review_bak` VALUES ('6', '100100', '11', '', '1', '200100100', '0000-00-00 00:00:00', '3001001001', 'testtttt', '1', '2014-11-25 11:36:49', '0000-00-00 00:00:00');
+INSERT INTO `review_bak` VALUES ('7', '100100', '11111', '', '1', '200100100', '0000-00-00 00:00:00', '3001001001', 'testtttt', '1', '2014-11-25 11:44:23', '0000-00-00 00:00:00');
+INSERT INTO `review_bak` VALUES ('8', '100100', 'hahaha', '', '2', '200100100', '0000-00-00 00:00:00', '3001001001', 'testtttt', '1', '2014-11-25 11:45:55', '0000-00-00 00:00:00');
+INSERT INTO `review_bak` VALUES ('9', '100100', '1111', '', '2', '200100100', '0000-00-00 00:00:00', '3001001001', 'testtttt', '1', '2014-11-25 11:46:32', '0000-00-00 00:00:00');
+INSERT INTO `review_bak` VALUES ('10', '100100', 'gggggg', '', '3', '200100100', '0000-00-00 00:00:00', '3001001001', 'testtttt', '1', '2014-11-25 11:47:04', '0000-00-00 00:00:00');
+INSERT INTO `review_bak` VALUES ('11', '100100', '呜呜呜呜', '', '3', '200100100', '0000-00-00 00:00:00', '3001001001', 'testtttt', '1', '2014-11-25 11:59:41', '0000-00-00 00:00:00');
+INSERT INTO `review_bak` VALUES ('12', '100100', '嘎嘎嘎嘎嘎嘎嘎', '', '2', '200100100', '0000-00-00 00:00:00', '3001001001', 'testtttt', '1', '2014-11-25 12:00:55', '0000-00-00 00:00:00');
+INSERT INTO `review_bak` VALUES ('13', '100100', '分', '', '2', '200100100', '2014-11-25 11:58:39', '3001001001', 'testtttt', '1', '2014-11-25 12:02:36', '0000-00-00 00:00:00');
+INSERT INTO `review_bak` VALUES ('14', '100100', 'QQ群', '', '2', '200100100', '2014-11-25 11:58:39', '3001001001', 'testtttt', '1', '2014-11-25 12:02:56', '0000-00-00 00:00:00');
+INSERT INTO `review_bak` VALUES ('15', '100100', 'lskk\"\";asda\\\\\';l\'a;s', '', '5', '200100100', '2014-11-25 11:58:39', '3001001001', 'testtttt', '1', '2014-11-25 13:43:54', '0000-00-00 00:00:00');
+INSERT INTO `review_bak` VALUES ('16', '100100', '1111', '', '3', '200100100', '2014-11-25 11:58:39', '3001001001', 'testtttt', '1', '2014-11-25 13:50:42', '0000-00-00 00:00:00');
+INSERT INTO `review_bak` VALUES ('17', '100100', '1asd\\sad\'ddsdf', '的顶顶顶顶顶', '4', '200100100', '2014-11-25 11:58:39', '3001001001', 'testtttt', '0', '2014-11-25 13:51:06', '0000-00-00 00:00:00');
 
 -- ----------------------------
 -- Table structure for tag
@@ -215,7 +313,7 @@ CREATE TABLE `tag` (
   `modification_time` datetime NOT NULL COMMENT '标签修改时间',
   PRIMARY KEY (`tag_id`),
   KEY `review_id` (`review_id`) USING BTREE,
-  CONSTRAINT `tag_ibfk_1` FOREIGN KEY (`review_id`) REFERENCES `review` (`review_id`)
+  CONSTRAINT `tag_ibfk_1` FOREIGN KEY (`review_id`) REFERENCES `review_bak` (`review_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
