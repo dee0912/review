@@ -16,4 +16,11 @@ class IndexController extends Controller {
         </div>
         <script type="text/javascript" src="http://tajs.qq.com/stats?sId=9347272" charset="UTF-8"></script>','utf-8');
     }
+
+	public function test(){
+	
+		echo U("Home/Index/test");
+                echo "<br>";
+                
+	}
 }

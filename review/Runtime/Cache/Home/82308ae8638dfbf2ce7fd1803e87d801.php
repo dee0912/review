@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<?php if (!defined('THINK_PATH')) exit();?><!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -6,7 +6,7 @@
 </head>
 <body>
 
-<form action="__URL__/AddReview" method="post" enctype="multipart/form-data">
+<form action="/review/index.php/Home/Review/AddReview" method="post" enctype="multipart/form-data">
 
 评分：<br>
 <input type="radio" name="score" value="1" checked="checked" />1分 
