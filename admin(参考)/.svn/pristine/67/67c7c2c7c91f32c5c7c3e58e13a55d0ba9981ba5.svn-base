@@ -1,0 +1,398 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wb="http://open.weibo.com/wb">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title></title>
+        <link href="__PUBLIC__/css/common.css" rel="stylesheet" type="text/css"/>
+        <link href="__PUBLIC__/css/ui-dialog.css" rel="stylesheet" type="text/css"/> 
+        <script  src="__PUBLIC__/js/jquery-1.9.1.min.js" type="text/javascript"></script>
+        <script src="__PUBLIC__/js/dialog-min.js"></script>
+        <script src="__PUBLIC__/js/page.js" type="text/javascript"></script>
+        <script src="__PUBLIC__/date/WdatePicker.js" type="text/javascript"></script>
+        <script>
+            $(document).ready(function(){
+                  clear_search();
+            });           
+
+            function clear_search(){
+                //查询条件清空
+                $("#search input[name='start_date']").val('');
+                $("#search input[name='end_date']").val('');
+                $("#search input[name='member_id']").val('');
+                $("#search input[name='nickname']").val('');
+                $("#search input[name='mobile']").val('');
+                ajaxPage();
+            }
+            
+            
+            function ajaxPage(){            
+               var url=$("#hide input[name='search']").val();
+               var start_date=$("#search input[name='start_date']").val();
+               var end_date=$("#search input[name='end_date']").val();
+               var member_id=$("#search input[name='member_id']").val();
+               var nickname=$("#search input[name='nickname']").val();
+               var mobile=$("#search input[name='mobile']").val();
+               $.post(
+                url,
+               {
+                   page: __page, 
+                   page_size: __page_size,
+                   start_date:start_date,
+                   end_date:end_date,
+                   member_id:member_id,
+                   nickname:nickname,
+                   mobile:mobile
+               },
+                function (data){
+                    var black_html='';                  
+                    if(data['count']>0){                       
+                        $.each(data['list'], function (i, item) {
+                            black_html += "<tr>";
+                            black_html += "<td>" + item.member_id + "</td>";
+                            black_html += "<td>" + item.nickname + "</td>";
+                            black_html += "<td>" + item.mobile + "</td>";
+                            black_html += "<td>" + item.remark + "</td>";
+                            black_html += "<td>" + item.rank_name + "</td>";
+                            black_html += "<td>" + item.operator + "</td>";
+                            black_html += "<td>" + item.update_time + "</td>";
+                            black_html += "<td>" + item.add_time + "</td>";                            
+                            black_html += "<td><a onclick='edti_rank("+ item.black_id+")'>编辑</a> <a onclick='remove_black("+ item.black_id +","+item.member_id+")'>删除</a></td>";
+                            black_html += "</tr>";
+                        });
+                       
+                        $("#black_list_count").text(data['count']);
+                        $("#black_list").text('');
+                        $("#black_list").append(black_html);
+                         bindPage(ajaxPage, data['count'] / __page_size);
+                    }else{
+                        $("#black_list_count").text(data['count']);
+                        $("#black_list").text('');
+                    }
+                },
+                 'json'
+                );               
+            }
+           
+           //增加黑名单页面展示
+           function add_black(){
+               var add_page=dialog({
+                   title:'新增黑名单',
+                   content:$("#add_black").html(),
+                   ok:function(){
+                       save();
+                   },
+                   okValue:'确定'                 
+               });
+               add_page.show();
+           }
+           
+           //黑名单修改，增加操作
+           function save(){
+               var member_info=$(".ui-dialog textarea[name='member_info']").val();
+               var rank_id=$(".ui-dialog select[name='rank_id']").val();
+               var remark=$(".ui-dialog textarea[name='remark']").val();
+               
+               var save_error=dialog({title:'消息提示',content:'会员信息不能为空',ok:true,okValue:'确定'});
+               if(member_info==''){
+                   save_error.show();
+                   return;
+               }
+               
+               var url=$("#hide input[name='save']").val();
+               $.post(
+                    url,
+                    {
+                        member_info:member_info,
+                        rank_id:rank_id,
+                        remark:remark
+                    },
+                    function(data){
+                        if(data==1){
+                            save_error.show();
+                        }else if(data==2){
+                            var error_news=dialog({title:'消息提示',content:'会员信息中存在已是黑名单会员，请认真检查',ok:true,okValue:'确定'});
+                            error_news.show();
+                        }else if(data==3){
+                            var add_news=dialog({title:'消息提示',content:'添加黑名单会员成功',ok:true,okValue:'确定'});
+                            add_news.show();
+                        }else if(data==4){
+                            var add_news=dialog({title:'消息提示',content:'添加黑名单会员失败',ok:true,okValue:'确定'});
+                            add_news.show();
+                        }
+                    },
+                    'json'
+                );
+               
+           }
+           function edti_rank(black_id){
+                var id_error=dialog({title:'黑名单消息',content:'请指定要操作的黑名单',ok:true,okValue:'确定'});
+                if(!$.isNumeric(black_id)){                  
+                    id_error.show();
+                    return;
+                }
+                var url=$("#hide input[name='query']").val();
+                $.post(
+                    url,
+                    {
+                        black_id:black_id
+                    },
+                    function(data){
+                        if(data==1){
+                            id_error.show();
+                        }else{
+                            var edit_black=dialog({
+                                title:'编辑黑名单',
+                                content:$("#edit_black").html(),
+                                ok:function(){
+                                    edit();
+                                },
+                                okValue:'保存'
+                            });
+                            $(".ui-dialog input[name='black_id']").val(black_id);
+                            $(".ui-dialog #member_id").text(data['member_id']);
+                            $(".ui-dialog #nickname").text(data['nickname']);
+                            $(".ui-dialog #mobile").text(data['mobile']);                            
+                            $(".ui-dialog select[name='rank_id'] option[value="+data['black_rank_id']+"]").attr("selected",true);
+                            $(".ui-dialog textarea[name='remark']").val(data['remark']);
+                            edit_black.show();
+                        }
+                    },
+                    'json'
+                );
+           }
+           
+           function edit(){
+               var url=$("#hide input[name='edit']").val();
+               var black_id=$(".ui-dialog input[name='black_id']").val();
+               var rank_id=$(".ui-dialog select[name='rank_id']").val();
+               var remark=$(".ui-dialog textarea[name='remark']").val();
+               
+               var id_error=dialog({title:'黑名单消息',content:'请指定要操作的黑名单',ok:true,okValue:'确定'});
+               if(!$.isNumeric(black_id) || !$.isNumeric(rank_id)){                  
+                   id_error.show();
+                   return;
+               }
+               
+               $.post(
+                    url,
+                    {
+                        black_id:black_id,
+                        rank_id:rank_id,
+                        remark:remark
+                    },
+                    function ($data){
+                        if($data==1){
+                            id_error.show();
+                        }else if(data=3){
+                            var edit_news=dialog({title:'消息提醒',content:'编辑黑名单成功',ok:true,okValue:'确定'});
+                            edit_news.show();
+                            ajaxPage();
+                        }else{
+                            var edit_news=dialog({title:'消息提醒',content:'编辑黑名单失败',ok:true,okValue:'确定'});
+                            edit_news.show();
+                        }
+                    },
+                    'json'
+                );
+               
+           }
+           
+           //删除黑名单
+           function remove_black(black_id,member_id){
+               var url=$("#hide input[name='delete']").val();
+               var id_error=dialog({title:'黑名单消息',content:'请指定要操作的黑名单',ok:true,okValue:'确定'});
+               if(!$.isNumeric(black_id) && $.isNumeric(member_id)){                  
+                   id_error.show();
+                   return;
+               }
+               $.post(
+                    url,
+                    {
+                        black_id:black_id,
+                        member_id:member_id
+                    },
+                    function (data){
+                        if(data==1){
+                            id_error.show();
+                        }else if(data==2){
+                            var del_news=dialog({title:'消息提醒',content:'删除黑名单成功',ok:true,okValue:'确定'});
+                            del_news.show();
+                            ajaxPage();
+                        }else{
+                            var del_news=dialog({title:'消息提醒',content:'删除黑名单失败',ok:true,okValue:'确定'});
+                            del_news.show();
+                        }
+                    },
+                    'json'
+                );
+           }
+           
+            //查询条件过滤
+            function search(){
+                var start_date=$("#search input[name='start_date']").val();
+                var end_date=$("#search input[name='end_date']").val();
+                var member_id=$("#search input[name='member_id']").val();
+                
+                if((start_date!='' && end_date=='') || (start_date=='' && end_date!='')){
+                    var search_error=dialog({
+                        title: '查询错误提示',
+                        content: "添加时间必须填写完整开始日期-结束日期",
+                        ok:true,
+                        okValue:'确定'
+                    });
+                    search_error.show();
+                    return;
+                }
+                
+                
+                if(start_date > end_date && start_date != ''){
+                    var search_error=dialog({
+                        title: '查询错误提示',
+                        content: "开始日期不能大于结束日期",
+                        ok:true,
+                        okValue:'确定'
+                    });
+                    search_error.show();
+                    return;
+                }
+                
+                if(member_id != '' && !$.isNumeric(member_id)){
+                   var search_error=dialog({
+                        title: '查询错误提示',
+                        content: "会员ID必须是数字",
+                        ok:true,
+                        okValue:'确定'
+                    });
+                    search_error.show();
+                    return ;
+                }
+                ajaxPage();
+            }
+        </script>
+        <style>
+            table{
+                table-layout:fixed;
+                empty-cells:show;
+                border-collapse: collapse;
+                margin:0 auto;
+                color: #868686;
+                font-family: "Arial Negreta","Arial";
+                font-style: normal;
+                font-weight: bolder;
+                text-align: center;
+            }
+        </style>
+
+    </head>
+    <body>
+        
+        
+        <div class="nav">当前页面：黑名单 》 黑名单列表</div>
+        <div id="search">
+            添加时间：<input type="text" name="start_date" class="date_size" onclick="WdatePicker({maxDate:'%y-%M-%d'})" /> - <input type="text" name="end_date" class="date_size" onclick="WdatePicker({maxDate:'%y-%M-%d'})"/>
+            会员ID：<input type="text" name='member_id' />
+            昵称：<input type="text" name='nickname' />     
+            手机号：<input type="text" name='mobile' />
+            <input type="button" value="查询" onclick="search()"/>
+            <input type="button" value="清空" onclick="clear_search()"/>
+        </div>
+        <div class="list_title">
+            黑名单列表  （共有<span id="black_list_count" class="color_red"></span>条数据）<input type="button" value="增加黑名单" onclick="add_black();" />
+        </div>
+        <hr/>
+        <table class="gridtable">
+            <THEAD> 
+                <TR> 
+                    <th>会员ID</th>
+                    <th>昵称</th>
+                    <th>会员手机号</th>
+                    <th>原因</th>
+                    <th>级别</th>
+                    <th>操作人</th>
+                    <th>修改时间</th>
+                    <th>添加时间</th>
+                    <th width="20%">操作</th>
+                </TR> 
+            </THEAD> 
+            <TBODY id="black_list"> </TBODY> 
+
+        </table>
+        <div class="div_page">
+            <a id="prePage" class="none">上一页</a>
+            <span class="page_list"></span>
+            <a id="nextPage" class="none">下一页</a>
+        </div>
+        
+
+        <!--隐藏域 start-->
+        <div id="add_black" style="display:none;">
+            <table>
+                <tr>
+                    <td width="80px" align="left">会员信息：</td>
+                    <td><textarea rows="2" cols="3" name="member_info"></textarea></td>
+                </tr>
+                <tr>
+                    <td>级别：</td>
+                    <td>
+                        <select name="rank_id">
+                            <foreach name="rank_list" item="vo">
+                                <option value="{$vo.black_rank_id}">{$vo.rank_name}</option>
+                            </foreach>
+                            
+                        </select>                    
+                    </td>
+                </tr>
+                <tr>
+                    <td>原因：</td>
+                    <td>
+                        <textarea cols="3" rows="2" name="remark"></textarea>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="edit_black" style="display:none;">
+            <table>
+                <tr>
+                    <td width="80px" align="left">会员ID：</td>
+                    <td id="member_id" align="left"></td>
+                </tr>
+                <tr>
+                    <td>昵称:</td>
+                    <td id="nickname" align="left"></td>
+                </tr>
+                <tr>
+                    <td>手机号：</td>
+                    <td id="mobile" align="left"></td>
+                </tr>                
+                <tr>
+                    <td>级别：</td>
+                    <td>
+                        <select name="rank_id">
+                            <foreach name="rank_list" item="vo">
+                                <option value="{$vo.black_rank_id}">{$vo.rank_name}</option>
+                            </foreach>                            
+                        </select>
+                        <input type="hidden" name="black_id" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>原因：</td>
+                    <td>
+                        <textarea cols="3" rows="2" name="remark"></textarea>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        
+        
+        <div id="hide" style="display: none;">
+            <input type="hidden" name="search" value="{$search}" />
+            <input type="hidden" name="save" value="{$save}"/>
+            <input type="hidden" name="query" value="{$query}" />
+            <input type="hidden" name="edit" value="{$edit}" />
+            <input type="hidden" name="delete" value="{$delete}">
+        </div>
+        <!--隐藏域 end-->
+
+    </body>
+</html>

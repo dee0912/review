@@ -13,8 +13,9 @@
 
 <!-- 遮罩 -->
 <div id="rbox">
-    <a class="go" href="#" onclick="return false;">关闭</a>
 
+    <a class="go" href="#" onclick="return false;">关闭</a>
+    订单编号：<span class="view-order-id"></span>
     <table class="gridtable">
             <thead>
                     <tr>
@@ -41,6 +42,40 @@
                     </tr>
             </tbody>
     </table>
+    </div>
+<!-- 新添评论 -->
+<div id="addbox">
+    <a class="go2" href="#" onclick="return false;">关闭</a>
+    <form class="addform" action="/review/index.php/Admin/Admin/addReview/" method="post" enctype="multipart/form-data"> 
+        
+        商品编码：<input type="text" name="product_id" value="3001001001"> <input id="randoidbtn" type="button" value="生成随机订单号"><input class="randoid" type="text" name="order_id" value="200100100"><br><br>
+        评论用户：<input type="text" name="member_name" value="tom"> <input id="randmidbtn" type="button" value="生成随机用户id"><input class="randmid" type="text" name="member_id" value="100100"><br><br>
+        评论图片：<input type="button" value="新增一张图片（最多添加 5 张）" id="addPic"><br><br>
+        <!--选择文件1：<input type="file" name="myfile[]" class="myfile">顺序：<input type="text" name="priority[]" ><br><br>-->
+        
+        <input class="upsize" type="hidden" name="MAX_FILE_SIZE" value="1000000">
+
+        评论内容：<br><textarea name="comment"></textarea><br><br>      
+        
+        评分：<br>
+        <input type="radio" name="score" value="1" checked="checked" />1分 
+        <input type="radio" name="score" value="2" />2分 
+        <input type="radio" name="score" value="3" />3分
+        <input type="radio" name="score" value="4" />4分 
+        <input type="radio" name="score" value="5" />5分
+        <br><br>
+
+        标签：<br>
+        <input type="checkbox" name="tag_name[]" value ="送货快" >送货快<br>
+        <input type="checkbox" name="tag_name[]" value ="新鲜">新鲜<br>
+        <input type="checkbox" name="tag_name[]" value ="口感好">口感好<br>
+        <br><br>
+
+        <!--<input type="hidden" name="order_id" value="200100100">-->
+        <input type="hidden" name="sale_prop" value="testtttt">
+
+        <input type="submit" value="保存">
+    </form>
 </div>
 <div id="mask"></div>
     
@@ -51,7 +86,7 @@
 商品编码：<input type="text" name="product_id">
 订单编号：<input type="text" name="order_id"><br><br>
 <input type="submit" name="submit" value="查询">
-</form><br><br><a class="viewmore" href="#" onclick="return false">新增评价</a>
+</form><br><br><a class="add" href="#" onclick="return false">新增评价</a>
 <br><br>
 评论列表（共有<font color="red"><?php echo ($count); ?></font>条数据）<br><br>
 <table class="gridtable">
@@ -133,7 +168,7 @@ $(function(){
                 obj = $(this);
 
 		//$.post("http://admin.huangdi.com/index.php/Home/Review/setEnabled/",{
-                $.post("http://127.0.0.28/review/index.php/Home/Review/setEnabled/",{
+                $.post("http://admin.huangdi.com/review/index.php/Home/Review/setEnabled/",{
 		
 			state:state,
 			review_id:$(this).parents("tr").attr("class"),
@@ -175,7 +210,7 @@ $(function(){
                 obj = $(this);
 
 		//$.post("http://admin.huangdi.com/index.php/Home/Review/setEnabled/",{
-                $.post("http://127.0.0.28/review/index.php/Home/Review/setTop/",{
+                $.post("http://admin.huangdi.com/review/index.php/Home/Review/setTop/",{
 		
 			isTop:isTop,
 			review_id:$(this).parents("tr").attr("class"),
@@ -212,10 +247,12 @@ $(function(){
             }            
             $("#rbox").show();  
             
+            //每次点击查看之前先清除评论图片，避免多次重复appent
+            $(".url").html("");
+            
             //ajax
-  
             //$.post("http://admin.huangdi.com/index.php/Home/Review/getReview/",{
-            $.post("http://127.0.0.28/review/index.php/Admin/Admin/getReview/",{
+            $.post("http://admin.huangdi.com/review/index.php/Admin/Admin/getReview/",{
 
                     review_id:$(this).parents("tr").attr("class"),
 
@@ -225,6 +262,8 @@ $(function(){
 
                 $.each(dataObj,function(idx,item){ 
 
+                  $(".view-order-id").html(item.order_id);
+                
                   $(".product_id").html(item.product_id);
                   $(".sale_prop").html(item.sale_prop);
                   $(".creation_time").html(item.creation_time);
@@ -235,7 +274,8 @@ $(function(){
                     $(".url").html("没有图片");
                   }else{
                   
-                    $(".url").html("<img src=<?php echo (UPLOADS_FILE); ?>"+item.url+" width=100>");
+                   $img =$("<img src=<?php echo (UPLOADS_FILE); ?>"+item.url+" width=100><br><br>");
+                   $img.appendTo($(".url"));
                   }
                   $(".comment").html(item.comment);
                   $(".score").html(item.score);
@@ -276,6 +316,113 @@ $(function(){
             $("#mask").hide();
             $("#rbox").hide();
         });
+        
+         $(".go2").click(function(){
+
+            $("#mask").hide();
+            $("#addbox").hide();
+        });
+        
+        //新增评论
+        $(".add").click(function(){
+            
+            if(window.screen.availHeight > $(document.body).outerHeight(true)){
+
+                //当屏幕可用工作区域的高度 > 浏览器当前窗口文档body的总高度 包括border padding margin时( 缩放时 )
+                $("#mask").show().css({"opacity":"0.5","width":"100%","height":window.screen.availHeight});
+            }else{
+
+                $("#mask").show().css({"opacity":"0.5","width":"100%","height":$(document.body).outerHeight(true)});
+            }            
+            $("#addbox").show();  
+            
+            //ajax
+            $.post("http://admin.huangdi.com/review/index.php/Admin/Admin/getReview/",{
+
+                    review_id:$(this).parents("tr").attr("class"),
+
+            },function(data,textStatus){
+
+                var dataObj=eval("("+data+")");
+
+                $.each(dataObj,function(idx,item){ 
+
+                  $(".product_id").html(item.product_id);
+                  $(".sale_prop").html(item.sale_prop);
+                  $(".creation_time").html(item.creation_time);
+                  $(".member_id").html(item.member_id);
+                 
+                  if(!item.url){
+              
+                    $(".url").html("没有图片");
+                  }else{
+                  
+                    $(".url").html("<img src=<?php echo (UPLOADS_FILE); ?>"+item.url+" width=100>");
+                  }
+                  $(".comment").html(item.comment);
+                  $(".score").html(item.score);
+                  
+                  if(!item.tag_name){
+                  
+                      $(".tag").html("没有标签");
+                  }else{
+                      
+                      $(".tag").html(item.tag_name);
+                  }
+                });
+                
+            });              
+            
+        });
+        
+        //新增评论中新增图片
+        $("#addPic").click(function(){
+             
+             //检测在新增评论的form的表单中有几个上传input
+             $(".addform").each(function(){
+                 
+                $len = $(this).children(".spanfile").length; 
+             });
+   
+             if($len < 5){
+
+                $inputfile = $("<div class=\"spanfile\" id=\"file"+$len+"\">选择文件 "+($len+1)+" ：<input type=\"file\" name=\"myfile[]\" class=\"myfile\"> 顺序：<input type=\"text\" name=\"priority[]\" ><input type=\"button\" value=\"取消\" class=\"delpic\" id=\"delpic"+$len+"\"></div>");
+                $inputfile.insertBefore($(".upsize"));
+ 
+            }else{
+
+                return;
+            }
+        });
+        
+        //取消新增的单张图片
+        $(".delpic").live("click",function(){
+
+            $(this).parent().remove();
+        });
+        
+        //生成随机用户id（member_id）
+        $("#randmidbtn").click(function(){
+            
+           $Num=""; 
+           for(var i=0;i<6;i++){
+               
+                $Num += Math.floor(Math.random()*10); 
+           }  
+           $(".randmid").val($Num);
+        });
+        
+        //生成随机订单id
+         $("#randoidbtn").click(function(){
+            
+           $Num=""; 
+           for(var i=0;i<6;i++){
+               
+                $Num += Math.floor(Math.random()*10); 
+           }  
+           $(".randoid").val($Num);
+        });      
+        
     });
 	
 

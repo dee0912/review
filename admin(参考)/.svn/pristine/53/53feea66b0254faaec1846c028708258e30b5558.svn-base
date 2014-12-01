@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TODO supply a title</title>
+    </head>
+    <div id="addPageHtml">
+             <form action="/Cms/addPage" method="post"> 
+                 <table>
+                     <tr align="right"><td>code_name:</td><td><input type="text" name="code_name" value="{$data.code_name}" /></td></tr>
+                     <tr align="right"><td>display_name:</td><td><input type="text" name="display_name" value="{$data.display_name}" /></td></tr>
+                     <tr align="right"><td>顺序:</td><td><input type="text" name="sortby" value="{$data.sortby}" /></td></tr>
+                      <tr align="right"><td><input type="hidden" name="page_id" value="{$data.page_id}" /></td></tr>
+                 </table>
+             </form>
+     </div>
+</html>

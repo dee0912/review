@@ -5,8 +5,8 @@ define('THINK_PATH','../ThinkPHP/');
 define('APP_NAME','review');
 define('APP_PATH','../review/');
 
-define('SITE_URL','http://127.0.0.28/review');
-define('UPLOADS_FILE','http://127.0.0.28/review/Uploads');
+define('SITE_URL','http://admin.huangdi.com/review');
+define('UPLOADS_FILE','http://admin.huangdi.com/review/Uploads');
 
 //开发模式
 define('APP_DEBUG',true);

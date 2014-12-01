@@ -428,7 +428,7 @@ class ReviewController extends Controller{
                 isset($_GET['p'])?$p = $_GET['p']:$p = 1;
                 //每页的记录数
                 isset($_GET['perpage'])?$perpage = $_GET['perpage']:$perpage = 5;
-                
+             
 		//没有查询信息时
 		//if(!$_POST['submit']){
                   if(!isset($_GET['start_date']) && !isset($_GET['end_date']) && !isset($_GET['product_id']) && !isset($_GET['order_id'])){
@@ -444,7 +444,7 @@ class ReviewController extends Controller{
 				//->page($p.','.$perpage)
                                 ->limit($perpage*($p-1),$perpage)
 				->select();
-                        file_put_contents("D:/mylog.log",$Review->getLastSql()."\r\n", FILE_APPEND);
+                        //file_put_contents("D:/mylog.log",$Review->getLastSql()."\r\n", FILE_APPEND);
                         $count = $Review->count();// 查询满足要求的总记录数
 			//echo $Review->getLastSql();exit();
                         //file_put_contents("D:/mylog.log",$Review->getLastSql()."\r\n", FILE_APPEND);
@@ -593,7 +593,160 @@ class ReviewController extends Controller{
              }
              
          }
+         
+        /***********************管理员添加评论**************************************/
+        public function AdminAddReview(){
 
+                //post数据
+                $data['score'] = $score =I('score');										//评分
+                $data['comment'] = $comment = I("comment");					//评论内容
+                $data['member_id'] = $member_id =I('member_id');			//用户id
+                $data['order_id'] = $order_id = I('order_id');						//订单id
+                $data['product_id'] = $product_id = I('product_id');			//商品id
+                $data['sale_prop'] = $sale_prop = I('sale_prop');				//商品销售属性
+
+
+                //用户id为空
+                if($member_id == ""){
+
+                        $error = 1;
+                        exit(json_encode(array("error"=>$error)));
+                }
+
+                //订单id为空
+                if($order_id == ""){
+
+                        $error = 2;
+                        exit(json_encode(array("error"=>$error)));
+                }
+
+                //评论为空
+                if($comment == ""){
+
+                        $error = 3;
+                        exit(json_encode(array("error"=>$error)));
+                }
+
+                //商品id为空
+                if($product_id == ""){
+
+                        $error = 4;
+                        exit(json_encode(array("error"=>$error)));
+                }
+
+                //商品销售属性为空
+                if($sale_prop == ""){
+
+                        $error = 5;
+                        exit(json_encode(array("error"=>$error)));
+                }
+
+                //查询订单时间
+                $orderObj = D("Order");	//在订单表中查询
+                $orderObj->create();
+                if(!$order_time = $orderObj->where('order_id='.$order_id)->getField('order_time')){
+
+                    //查询不到订单时间
+                    $error = 2;
+                    exit(json_encode(array("error"=>$error)));
+
+                }else{
+
+                    $data['order_time'] = $order_time;
+                }
+
+                //添加评论时间
+                $data['creation_time'] = $creation_time = date("Y-m-d H:i:s",time());
+
+
+                //添加评论
+                $reviewObj = D("Review");
+                $reviewObj->create();
+                if($review_id = $reviewObj->data($data)->add()){
+
+                   //添加评论成功后，如果标签不为空，则添加tag至标签表
+                   if($_POST['tag_name']!=""){
+
+                        $tag_name = implode('|',I('tag_name')); 
+                        $tagData['tag_name'] = $tag_name ; //标签名称
+                        $tagData['review_id'] = $review_id;
+                        $tagData['creation_time'] = $creation_time;
+                        $tagObj = D("Tag");
+                        $tagObj->create();
+                        if(!$tagObj->data($tagData)->add()){
+
+                            //添加tag失败
+                            $error = 7;
+                            exit(json_encode(array("error"=>$error)));
+                        }
+                   }
+
+                   //添加url和priority至order_show_pic表
+                   if($_FILES['myfile']!=""){
+
+                        // 实例化上传类
+                        $upload = new \Think\Upload();
+                        $upload->maxSize   =     1000000 ;                                  // 设置附件上传大小    1M
+                        $upload->exts      =     array('jpg', 'gif', 'png', 'jpeg');        // 设置附件上传类型
+                        $upload->savePath  =      "/Home/";                                 // 设置附件上传目录,对应review/Uploads/Home
+
+                        $info = $upload->upload();
+
+                        if(!$info) {
+
+                            //上传失败
+                            $error = 6;
+                            exit(json_encode(array("error"=>$error)));
+                        }
+
+                        $picObj = D("Order_show_pic");
+                        $picObj->create();
+
+                        //取出并添加图片url
+                        foreach($info as $key=>$file){
+
+                            $picData['url'] = $file['savepath'].$file['savename'];
+                            $picData['review_id'] = $review_id;
+                            $picData['creation_time'] = $data['creation_time'] ;
+
+                            if($_POST['priority'][$key]==""){
+
+                                //顺序为空
+                                $_POST['priority'][$key] = 1;
+
+                            }else{
+
+                                //强制转换为整型
+                                if(!is_numeric($_POST['priority'][$key])){
+
+                                        $_POST['priority'][$key] = 1;
+                                }
+                            }
+
+                            $picData['priority'] = (int)$_POST['priority'][$key];
+
+                            if(!$picObj->data($picData)->add()){
+
+                                //图片添加失败
+                                $error = 8;
+                                exit(json_encode(array("error"=>$error)));
+                            }
+                        }
+                   }
+
+                   //评论添加成功
+                   $flag = 1; 
+                   exit(json_encode(array("flag"=>$flag)));
+
+               }else{
+
+                   //评论添加失败
+                   $flag = 0;
+                   exit(json_encode(array("flag"=>$flag)));
+               }
+
+
+        }
 
 
 

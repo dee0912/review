@@ -63,3 +63,6 @@
     
     margin:20px;
 }
+
+input[type=radio]{ width:25px;}
+input[type=checkbox]{ width:25px;}

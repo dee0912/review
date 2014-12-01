@@ -7,19 +7,19 @@ class AdminController extends Controller{
 
 	//获取后台评论列表
         public function getList(){
-            
+          
                 //每页记录数
 		$perpage = 5;
                 //当前页
-                $p = $_GET['p'];
+                $p = $_GET['p'] == ""?1:$_GET['p'];
  
                 $pageInfo = "perpage/".$perpage."/p/".$p."/";
 
                 //$url = "http://admin.huangdi.com/index.php/Home/Review/searchReview/";
                 if(!$_POST['submit']){
                 
-                    $url = "http://127.0.0.28/review/index.php/Home/Review/searchReview/".$pageInfo;
-              
+                    $url = "http://admin.huangdi.com/review/index.php/Home/Review/searchReview/".$pageInfo;
+           
                 }else{
                         
                     $param = "";
@@ -38,18 +38,19 @@ class AdminController extends Controller{
                         $param .= "order_id/".$_POST['order_id']."/";
                     }
                     
-                    $url = "http://127.0.0.28/review/index.php/Home/Review/searchReview/".$param."/".$pageInfo;
+                    $url = "http://admin.huangdi.com/review/index.php/Home/Review/searchReview/".$param."/".$pageInfo;
                     
                 }
                 
-		$handle = fopen($url,"rb");
+		$handle = fopen("$url","rb");
 		$content = "";
-		while(!feof($handle)){
+	
+                while(!feof($handle)){
 		
 			$content .= fread($handle,10000);
 		}
 		fclose($handel);
-		
+	  	
 		$content = json_decode($content,true);
 				
 		//分页
@@ -69,9 +70,10 @@ class AdminController extends Controller{
             
 		$review_id = $_POST['review_id'];
                 //$url = "http://admin.huangdi.com/index.php/Home/Review/getReview/";
-                $url = "http://127.0.0.28/review/index.php/Home/Review/getReview/review_id/".$review_id;
+                $url = "http://admin.huangdi.com/review/index.php/Home/Review/getReview/review_id/".$review_id;
 		$handle = fopen($url,"rb");
 		$content = "";
+                        
 		while(!feof($handle)){
 		
 			$content .= fread($handle,10000);
@@ -81,4 +83,40 @@ class AdminController extends Controller{
                 echo $content;
 		
 	}
+        
+       //管理员后台添加商品评论
+        public function addReview(){
+            
+            $product_id = I("product_id");
+            $order_id = I("order_id");
+            $member_name = I("member_name");
+            $member_id = I("member_id");
+            
+            $comment = I("comment");
+            $score = I("score");
+            $tag_name = I("tag_name");
+            $sale_prop = I("sale_prop");
+            
+            $param = "product_id/".$product_id."/order_id/".$order_id."/member_name/".$member_name."/comment/".$comment."/score/".$score."/sale_prop/".$sale_prop."/";
+            
+            if($_FILES['myfile']!=""){ $myfile = $_FILE['myfile']; $param .= "myfile/".$myfile."/";}
+            
+            if($_POST['tag_name']!=""){ $tag_name = $_POST['tag_name']; $param .= "tag_name/".$tag_name."/";}
+            
+            $url = "http://admin.huangdi.com/review/index.php/Home/Review/AdminAddReview/".$param;
+            echo $url;exit();
+            
+            $handle = fopen($url,"rb");
+            $content = "";
+
+            while(!feof($handle)){
+
+                    $content .= fread($handle,10000);
+            }
+            fclose($handel);
+
+            echo $content;
+            
+            
+        }
 }

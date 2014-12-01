@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wb="http://open.weibo.com/wb">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title></title>
+        <link href="__PUBLIC__/css/common.css" rel="stylesheet" type="text/css"/>
+        <link href="__PUBLIC__/css/ui-dialog.css" rel="stylesheet" type="text/css"/>
+    </head>
+    <style>
+        .ui-dialog-autofocus{ display:none;}
+    </style>
+    <body>
+        <div class="nav">当前页面：品牌管理 》 品牌列表</div>
+        <div class="list_title">
+            品牌列表  （共有<span id="category_count" class="color_red">{$brandlist.count}</span>条数据） <input id="butAddBrand" type="button" value="添加品牌" class="hand_style" >
+        </div>
+        <hr/>
+        <div style="margin:20px 0;">
+            <h3>品牌查询</h3>
+            <div style="margin:20px 0;">
+                <form action="/Brand/searchBrandList" method="post">
+                    品牌编码：<input type="text" name="brand_id" value="{$searchVal.brand_id}"> &nbsp;品牌名称 <input type="text" name="name" value="{$searchVal.name}"/><br/><br/>
+                    <input type="submit" value="查询" style="margin-left:60px;" /> <input type="reset" value="清空" />
+                </form>
+            </div>
+        </div>
+         <hr/>
+        <div>
+        <table class="gridtable">
+            <THEAD> 
+                <TR> 
+                    <th width="10%">品牌ID</th>
+                    <th width="25%">品牌名称</th>
+                    <th width="25%">创建时间</th>
+                    <th width="20%">操作</th>
+                </TR> 
+            </THEAD> 
+            <TBODY>
+               <foreach name="brandlist.data" key="k" item="list">
+                   <tr align="center" id="brand_{$list.brand_id}">
+                       <td>{$list.brand_id}</td><td>{$list.name}</td>
+                       <td>{$list.creation_time}</td>
+                       <td><a href="javascript:void(0);" onclick="editBrand({$list.brand_id})"  />编辑</a>
+                           &nbsp;<a href="javascript:void(0);" onclick="deleteBrand({$list.brand_id})"  />删除</a></td></tr>
+               </foreach>
+            </TBODY>
+        </table>
+         </div>
+         <div class="pagelist">{$page}</div>
+         <!--添加品牌-->
+         <div id="addBrandHtml" class="hide">
+             <form action="/Brand/addBrand" method="post">
+                 <table width="100%" align="center" height="130">
+                     <tr ><td align="right" height="50px;">品牌名称:</td><td><input type="text" name="name"></td></tr>
+                     <tr ><td align="right">品牌顺序:</td><td><input type="text" name="priority" onblur="check_priority(this)">&nbsp;<font color="red">* 顺序必须为数字</font></td></tr>
+                     <tr><td></td><td><input type="submit" value="提交"><input type="reset" value="重置"></td></tr>
+                 </table>
+             </form>
+         </div>
+        <script  src="__PUBLIC__/js/jquery-1.9.1.min.js" type="text/javascript"></script>       
+        <script src="__PUBLIC__/js/dialog-min-admin.js"></script>
+        <script>
+            $(function () {
+                //添加品牌
+                $("#butAddBrand").bind("click",function(){
+                    var add_dept=dialog({
+                        title: '添加品牌',
+                        content: $('#addBrandHtml').html(),
+                        width:480,
+                        ok:function(){
+                        doAddPage();
+                        }
+                        });
+                        add_dept.show();
+                });
+            });
+            //顺序验证
+            function check_priority(obj){
+                var val =   $(obj).val();
+                var regExp=/^\d+(\.\d+)?$/;
+                if(!regExp .test (val )){
+                    alert("排序必须为整数数字");
+                    $(obj).val("");return;
+                }
+            }
+            //编辑品牌
+            function editBrand(brand_id){
+                 $.ajax({
+                    type: 'get',
+                    dataType: 'html',
+                    url: "/Brand/modifyBrand",
+                    data: {"brand_id":brand_id,"dotype":"edit"},
+                    success: function (returnData) {
+                        if(returnData){
+                            var edit_dept=dialog({
+                                title: '编辑品牌',
+                                content: returnData,
+                                width:480
+                            });
+                            edit_dept.show();return;
+                        }                            
+                    }
+                });
+            }
+            //删除品牌
+            function deleteBrand(brand_id){
+                $.ajax({
+                    type: 'get',
+                    url: "/Brand/deleteBrand",
+                    dataType: 'json',
+                    data: {"brand_id":brand_id},
+                    success: function (data) {
+                        if(data.result == 1){
+                            alert(data.dis);
+                            $("#brand_"+brand_id).remove();return;
+                        }else{
+                            alert(data.dis);return;
+                        }
+                     }
+                 });
+            }
+            
+        </script>
+    </body>
+</html>
