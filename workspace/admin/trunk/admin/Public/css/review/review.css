@@ -1,0 +1,68 @@
+.set-enabled,.setTop{
+
+	cursor:pointer;
+}
+
+.set-enabled:hover,.setTop:hover{
+
+	color:red;
+}
+
+
+#rbox{ 
+
+    width:1000px; 
+    height:420px; 
+    position:fixed; 
+    top:50%; 
+    left:50%; 
+    margin:-210px 0 0 -500px; 
+    border-radius:8px; /*圆角*/ 
+    background-color:#999; 
+    z-index:3;
+    display:none;    
+}
+
+.go,.go2{ 
+
+    position:absolute;
+    right: 10px;
+    top: 10px;
+    padding: 5px 12px;
+    background: rgba(0,0,0,.4);
+    box-shadow: 0 0 0 2px rgba(255,255,255,.4);
+    color: #fff;
+    border-radius: 26px;
+}
+
+#mask{ 
+
+    background-color:#000; 
+    position:absolute; 
+    top:0; 
+    left:0; 
+    display:none;
+    z-index:2;
+}
+
+#addbox{ 
+
+    width:800px; 
+    height:600px; 
+    position:fixed; 
+    top:50%; 
+    left:50%; 
+    margin:-300px 0 0 -400px; 
+    border-radius:8px; /*圆角*/ 
+    background-color:#999; 
+    z-index:3;
+    display:none;    
+}
+
+.addform{
+    
+    margin:20px;
+}
+
+input[type=radio]{ width:25px;}
+input[type=checkbox]{ width:25px;}

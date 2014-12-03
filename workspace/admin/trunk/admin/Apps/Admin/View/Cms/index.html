@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wb="http://open.weibo.com/wb">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title></title>
+        <link href="__PUBLIC__/css/common.css" rel="stylesheet" type="text/css"/>
+        <link href="__PUBLIC__/css/ui-dialog.css" rel="stylesheet" type="text/css"/>
+        <link rel="stylesheet" type="text/css" href="__PUBLIC__/css/pager.css" />
+    </head>
+    <body>
+        <div class="list_title">
+            类目列表  （共有<span id="category_count" class="color_red"></span>条数据） 
+            <a href="__URL__/add_text">添加文字广告</a>
+            <a href="__URL__/add_image">添加图片广告</a>
+        </div>
+        <hr/>
+        <table class="gridtable">
+            <THEAD> 
+                <TR> 
+                    <th>广告编码</th>
+                    <th>广告类型</th>
+                    <th>显示位置</th>
+                    <th>添加时间</th>
+                    <th>操作</th>
+                </TR> 
+        <volist name="show" id="vo">  
+                <TR> 
+                    <th>{$vo.product_id}</th>
+                    <th>{$vo.sku_id}</th>
+                    <th>{$vo.category_name}</th>
+                    <th>{$vo.product_name}</th>
+                    <th><a href="">编辑</a>|<a href="javascript:;" onclick="del()">删除</a></th>
+                </TR>               
+        </volist>
+            </THEAD> 
+            <TBODY id="category_list"> </TBODY> 
+
+        </table>
+        <script  src="__PUBLIC__/js/jquery-1.9.1.min.js" type="text/javascript"></script>
+        <script src="__PUBLIC__/js/product_manager/category.js" type="text/javascript"></script>
+        <script src="__PUBLIC__/js/dialog-min.js"></script>
+
+      
+    </body>
+
+</html>

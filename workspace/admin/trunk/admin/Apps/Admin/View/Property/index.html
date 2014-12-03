@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wb="http://open.weibo.com/wb">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title></title>
+        <link href="__PUBLIC__/css/common.css" rel="stylesheet" type="text/css"/>
+        <link href="__PUBLIC__/css/ui-dialog.css" rel="stylesheet" type="text/css"/> 
+    </head>
+    <body>
+        <div class="nav">当前页面：商品管理 》 属性管理</div>
+        <div class="list_title">
+            属性查询
+        </div>
+        <table class="searchtable">
+            <tr>
+                <td>属性名称:<input type="text" id="txt_property_name"></td><td>属性类别:<select id="property_type_list"></select></td>
+            </tr>
+            <tr>
+                <td><input type="button" id="btnSearch" value="搜索" class="sub_search"></td><td></td>
+            </tr>
+        </table>
+        <hr/>
+        <div class="list_title">
+            属性列表  （共有<span id="property_count" class="color_red"></span>条数据） <input id="butAdd" type="button" value="添加属性" class="hand_style" >
+        </div>
+        <hr/>
+        <table class="gridtable">
+            <THEAD> 
+                <TR> 
+                    <th>属性ID</th>
+                    <th>属性类别</th>
+                    <th>属性名称</th>
+                    <th>更新时间</th>
+                    <th>更新人</th>
+                    <th>操作</th>
+                </TR> 
+            </THEAD> 
+            <TBODY id="property_list"> </TBODY> 
+
+        </table>
+
+        <!--编辑框-->
+        <div id="addPop" class="none">
+            <table class="gridtable">
+                <input type="hidden" id="property_id" value="0">
+                <TBODY>
+                    <tr>
+                        <td>属性ID</td>
+                        <td><lable id="lab_property_id"  /></td>
+                    </tr>
+                    <tr>
+                        <td width="60">属性类别</td>
+                        <td>
+                            <select id="property_type_list">
+                            </select>
+                            <span class="color_red"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>属性名称</td>
+                        <td><input id="property_name" /><span class="color_red"></span></td>
+                    </tr>
+
+                </TBODY>
+            </table>
+        </div>
+
+        <script  src="__PUBLIC__/js/jquery-1.9.1.min.js" type="text/javascript"></script>
+        <script src="__PUBLIC__/js/product_manager/property.js" type="text/javascript"></script>
+        <script src="__PUBLIC__/js/dialog-min.js"></script>
+        <script src="__PUBLIC__/js/page.js" type="text/javascript"></script>
+        <script>
+            $(function () {
+                window.Property.getPropertyTypeList($("#property_type_list"));
+                //绑定点击
+                window.Property.bindClickEvent();
+                //查询
+                window.Property.searchProperty();
+            });
+        </script>
+    </body>
+</html>
