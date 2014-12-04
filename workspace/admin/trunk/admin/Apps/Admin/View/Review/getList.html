@@ -152,10 +152,12 @@
 			<td>{$vo.creation_time}</td>
                         <td>
                              <if condition="($vo.url != '') ">
-                             <img src="{$fasfdfsurl}{$vo.url}" width="100">
+                                <img src="{$fasfdfsurl}{$vo.url}" width="100">
+                             <else/>
+                                没有图片
                              </if>
                         </td>
-			<td>{$vo.comment}</td>
+			<td> {$vo.comment|subtext=40} </td>
 			<td>
                             <if condition="$vo.order_id eq 0"><!--管理员后台添加的评论没有订单号-->
                                 {$vo.review_user}

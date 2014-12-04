@@ -11,7 +11,7 @@ class ReviewController extends Controller{
             $this->display();
     }
 
-    //添加评论信息
+    //前台用户添加评论信息
     public function AddReview(){
 
             //post数据
@@ -81,75 +81,60 @@ class ReviewController extends Controller{
             $reviewObj->create();
             if($review_id = $reviewObj->data($data)->add()){
 
-               //添加评论成功后，如果标签不为空，则添加tag至标签表
-               if($_POST['tag_name']!=""){
+                    //添加评论成功后，如果标签不为空，则添加tag至标签表
+                   if($_POST['tag_name']!=""){
 
-                    $tag_name = implode('|',I('tag_name')); 
-                    $tagData['tag_name'] = $tag_name ; //标签名称
-                    $tagData['review_id'] = $review_id;
-                    $tagData['creation_time'] = $creation_time;
-                    $tagObj = D("Tag");
-                    $tagObj->create();
-                    if(!$tagObj->data($tagData)->add()){
+                        $tag_name = implode('|',I('tag_name')); 
+                        $tagData['tag_name'] = $tag_name ; //标签名称
+                        $tagData['review_id'] = $review_id;
+                        $tagData['creation_time'] = $creation_time;
+                        $tagObj = D("Tag");
+                        $tagObj->create();
+                        if(!$tagObj->data($tagData)->add()){
 
-                        //添加tag失败
-                        $error = 7;
-                        exit(json_encode(array("error"=>$error)));
-                    }
-               }
-
-               //添加url和priority至order_show_pic表
-               if($_FILES['myfile']!=""){
-                          
-                    // 实例化上传类
-                    $upload = new \Think\Upload();
-                    $upload->maxSize   =     1000000 ;                                  // 设置附件上传大小    1M
-                    $upload->exts      =     array('jpg', 'gif', 'png', 'jpeg');        // 设置附件上传类型
-                    $upload->savePath  =      "/Home/";                                 // 设置附件上传目录,对应review/Uploads/Home
-           
-                    $info = $upload->upload();
-           
-                    if(!$info) {
-
-                        //上传失败
-                        $error = 6;
-                        exit(json_encode(array("error"=>$error)));
-                    }
-                                 
-                    $picObj = D("Order_show_pic");
-                    $picObj->create();
-
-                    //取出并添加图片url
-                    foreach($info as $key=>$file){
-
-                        $picData['url'] = $file['savepath'].$file['savename'];
-                        $picData['review_id'] = $review_id;
-                        $picData['creation_time'] = $data['creation_time'] ;
-
-                        if($_POST['priority'][$key]==""){
-
-                            //顺序为空
-                            $_POST['priority'][$key] = 1;
-
-                        }else{
-
-                            //强制转换为整型
-                            if(!is_numeric($_POST['priority'][$key])){
-
-                                    $_POST['priority'][$key] = 1;
-                            }
-                        }
-
-                        $picData['priority'] = (int)$_POST['priority'][$key];
-
-                        if(!$picObj->data($picData)->add()){
-
-                            //图片添加失败
-                            $error = 8;
+                            //添加tag失败
+                            $error = 6;
                             exit(json_encode(array("error"=>$error)));
                         }
-                    }
-               }
+                   }
+
+                   //添加link和priority至order_show_pic表
+                   if($_POST['link']){
+                       
+                        $picObj = D("Order_show_pic");
+                        $picObj->create();
+
+                        //取出并添加图片url
+                        foreach($_POST['link'] as $key=>$url){
+
+                            $picData['url'] = $url;
+                            $picData['review_id'] = $review_id;
+                            $picData['creation_time'] = $data['creation_time'] ;
+
+                            if($_POST['priority'][$key]==""){
+
+                                //顺序为空
+                                $_POST['priority'][$key] = 1;
+
+                            }else{
+
+                                //强制转换为整型
+                                if(!is_numeric($_POST['priority'][$key])){
+
+                                        $_POST['priority'][$key] = 1;
+                                }
+                            }
+
+                            $picData['priority'] = (int)$_POST['priority'][$key];
+
+                            if(!$picObj->data($picData)->add()){
+
+                                //图片添加失败
+                                $error = 7;
+                                exit(json_encode(array("error"=>$error)));
+                            }
+                        }
+                   }
 
                //评论添加成功
                $flag = 1; 
@@ -161,8 +146,7 @@ class ReviewController extends Controller{
                $flag = 0;
                exit(json_encode(array("flag"=>$flag)));
            }
-                 
-             
+                      
     }
     
     //前台查看评论
@@ -170,11 +154,22 @@ class ReviewController extends Controller{
         
         if(I("product_id")){
 
-            $product_id = I("product_id");
+            if(I("product_id")){
+                
+                $product_id = I("product_id");
+                $where = " review.product_id = ".$product_id;
+            }
+            
+            if(I("member_id")){
+                
+                $member_id = I("member_id");
+                $where = " review.member_id = ".$member_id;
+            }
+            
             $reviewObj = M("Review");
             $memberObj = M("MemberDB.member_info");
             $tagObj = M("tag");
-            $where = " review.product_id = ".$product_id;
+            
                     
             $count = $reviewObj
                     ->join('Left JOIN MemberDB.member_info On review.member_id = member_info.member_id Left JOIN order_show_pic on review.review_id = order_show_pic.review_id Left join tag on review.review_id=tag.review_id')
@@ -252,7 +247,7 @@ class ReviewController extends Controller{
 
 
     /*********************************查询评论列表**********************************************/
-    public function getList(){
+    /*public function getList(){
 
 
         //接收get参数
@@ -321,7 +316,7 @@ class ReviewController extends Controller{
         }
 
 
-    }
+    }*/
 
 
 	/*********************************获取一条评论的详情**********************************************/
