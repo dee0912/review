@@ -9,7 +9,7 @@
 }
 
 
-#rbox{ 
+#rbox,#replybox{ 
 
     width:1000px; 
     height:420px; 
@@ -23,7 +23,7 @@
     display:none;    
 }
 
-.go,.go2{ 
+.go,.go2,.go3{ 
 
     position:absolute;
     right: 10px;

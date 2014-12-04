@@ -164,53 +164,91 @@ class ReviewController extends Controller{
                  
              
     }
+    
+    //前台查看评论
+    public function viewReview(){
+        
+        if(I("product_id")){
 
-	/*****************************************后台****************************************************/
-	/*********************************管理员回复评论/晒单**********************************************/
+            $product_id = I("product_id");
+            $reviewObj = M("Review");
+            $memberObj = M("MemberDB.member_info");
+            $tagObj = M("tag");
+            $where = " review.product_id = ".$product_id;
+                    
+            $count = $reviewObj
+                    ->join('Left JOIN MemberDB.member_info On review.member_id = member_info.member_id Left JOIN order_show_pic on review.review_id = order_show_pic.review_id Left join tag on review.review_id=tag.review_id')
+                    ->field('member_info.nickname,review.score,review.creation_time,tag.tag_name,review.comment,review.sale_prop,review.reply,order_show_pic.url')
+                    ->where($where)
+                    ->count();
+            if($count>0){
+    
+                $list = $reviewObj
+                    ->join('Left JOIN MemberDB.member_info On review.member_id = member_info.member_id Left JOIN order_show_pic on review.review_id = order_show_pic.review_id Left join tag on review.review_id=tag.review_id')
+                    ->field('member_info.nickname,review.score,review.creation_time,tag.tag_name,review.comment,review.sale_prop,review.reply,order_show_pic.url')
+                    ->where($where)
+                    ->select();
+                exit(json_encode(array("list"=>$list)));
+            }else{
+                
+                $flag = 0;
+                exit(json_encode(array("flag"=>0)));
+            }
+           
+        }else{
+            
+            $error = 1;
+            exit(json_encode(array("error"=>$error)));
+        }
+    } 
 
-		public function replyView(){
+    /*****************************************后台****************************************************/
+    /*********************************管理员回复评论/晒单**********************************************/
 
-			$this->display();
-		}
+    public function replyView(){
 
-		public function reply(){
+            $this->display();
+    }
 
-			//post信息
-			$review_id = I('review_id');
-			$data['reply'] = $reply = I('reply');
+    public function reply(){
 
-			$reviewObj = D("Review");
-			$reviewCount = $reviewObj->where("review_id=".$review_id)->count();
+            //post信息
+            $review_id = I('review_id');
+            $data['reply'] = $reply = I('reply');
 
-			//订单不存在
-			if($reviewCount  == 0){
-
-				$error = 1;
-				exit(json_encode($error));
-			}
-
-			//管理员回复为空
-			if($reply  == ""){
-
-				$error = 2;
-				exit(json_encode($error));
-			}
+            $reviewObj = D("Review");
+            $reviewCount = $reviewObj->where("review_id=".$review_id)->count();
 
 
-			$replyObj = D("Review");
-			$replyObj->create();
-			if($replyObj->where("review_id=".$review_id)->save($data)){
+            //管理员回复为空
+            if($reply  == ""){
 
-				    $flag = 1; //回复成功
-					exit(json_encode($flag));
+                $error = 1;
+                exit(json_encode(array("error"=>$error)));
+            }
+            
+            //用户评论不存在
+            if($review_id == ""){
+                
+                $error = 2;
+                exit(json_encode(array("error"=>$error)));                
+            }
 
-			}else{
 
-					$flag = 0; //回复失败
-					exit(json_encode($flag));
-			}
+            $replyObj = D("Review");
+            $replyObj->create();
+            if($replyObj->where("review_id=".$review_id)->save($data)){
 
-		}
+                $flag = 1; //回复成功
+                exit(json_encode(array("flag"=>$flag)));
+
+            }else{
+
+                $flag = 0; //回复失败
+                exit(json_encode(array("flag"=>$flag)));
+            }
+
+    }
 
 
     /*********************************查询评论列表**********************************************/
@@ -306,8 +344,8 @@ class ReviewController extends Controller{
 		if($reviewCount = $reviewObj->where($where)->count() > 0){
 
                     $review = $picObj
-                    ->join('RIGHT JOIN review On review.review_id = order_show_pic.review_id LEFT JOIN tag On tag.review_id = review.review_id')
-                    ->field('review.review_id,review.member_id,review.order_id,review.product_id,review.sale_prop,review.creation_time,review.comment,review.score,review.is_enabled,review.order_top,order_show_pic.url,tag.tag_name')
+                    ->join('RIGHT JOIN review On review.review_id = order_show_pic.review_id LEFT JOIN tag On tag.review_id = review.review_id  Left join MemberDB.member_info on review.member_id = MemberDB.member_info.member_id  Left join CatalogDB.product on review.product_id = CatalogDB.product.product_id')
+                    ->field('review.review_id,review.member_id,review.order_id,review.product_id,review.sale_prop,review.creation_time,review.comment,review.score,review.reply,review.is_enabled,review.review_user,review.order_top,order_show_pic.url,tag.tag_name,MemberDB.member_info.nickname,CatalogDB.product.name')
                     ->where($where)
                     ->select();
 
@@ -429,15 +467,13 @@ class ReviewController extends Controller{
 
                     // 进行分页数据查询 
                     $list = $Review
-                            ->join('LEFT JOIN order_show_pic On review.review_id = order_show_pic.review_id')
-                            ->field('review.review_id,review.member_id,review.order_id,review.product_id,review.sale_prop,review.creation_time,review.comment,review.is_enabled,review.order_top,order_show_pic.url')
+                            ->join('LEFT JOIN order_show_pic On review.review_id = order_show_pic.review_id Left join MemberDB.member_info on review.member_id = MemberDB.member_info.member_id Left join CatalogDB.product on review.product_id = CatalogDB.product.product_id')
+                            ->field('review.review_id,review.member_id,review.order_id,review.product_id,review.sale_prop,review.creation_time,review.comment,review.is_enabled,review.order_top,review.review_user,order_show_pic.url,MemberDB.member_info.nickname,CatalogDB.product.name')
                             ->group("review.review_id")
                             ->order('review.order_top desc,review.creation_time desc')
-                            //->page($p.','.$perpage)
                             ->limit($perpage*($page-1),$perpage)
                             ->select();
-
-                    //file_put_contents("D:/mylog.log",$Review->getLastSql()."\r\n", FILE_APPEND);
+                    
                     $count = $Review->count();// 查询满足要求的总记录数
                         
 		}else{
@@ -509,7 +545,7 @@ class ReviewController extends Controller{
 		->order('review.order_top desc,review.creation_time desc')
                 ->limit($perpage*($page-1),$perpage)
 		->select();
-     
+     //exit(json_encode($Review->getLastSql()));
                 $count = $Review
 		->join('LEFT JOIN order_show_pic On review.review_id = order_show_pic.review_id')
 		->field('review.review_id,review.member_id,review.order_id,review.product_id,review.sale_prop,review.creation_time,review.comment,review.is_enabled,review.order_top,order_show_pic.url')
@@ -583,10 +619,10 @@ class ReviewController extends Controller{
                 $data['score'] = $score =I('score');										//评分
                 $data['comment'] = $comment = I("comment");					//评论内容
                 $data['member_id'] = $member_id =I('member_id');			//用户id
-                $data['order_id'] = $order_id = I('order_id');						//订单id
                 $data['product_id'] = $product_id = I('product_id');			//商品id
                 $data['sale_prop'] = $sale_prop = I('sale_prop');				//商品销售属性
                 $data['order_top'] = 1;
+                $data['review_user'] = $review_user = I("review_user");
                   
                 //用户id为空
                 if($member_id == ""){
@@ -595,12 +631,6 @@ class ReviewController extends Controller{
                         exit(json_encode(array("error"=>$error)));
                 }
 
-                //订单id为空
-                if($order_id == ""){
-
-                        $error = 2;
-                        exit(json_encode(array("error"=>$error)));
-                }
 
                 //评论为空
                 if($comment == ""){
@@ -614,6 +644,18 @@ class ReviewController extends Controller{
 
                         $error = 4;
                         exit(json_encode(array("error"=>$error)));
+                }else{
+                    
+                    $productObj = M("CatalogDB.product");
+                    $count = $productObj->field('product_id')->where('product_id='.$product_id)->count();
+                    if($count == 0){
+                        
+                        $error = 4;
+                        exit(json_encode(array("error"=>$error)));
+                    }else{
+                       
+                        //销售属性sale_prop 由三张表 product、product_property_map_property 联合查询
+                    } 
                 }
 
                 //商品销售属性为空
@@ -623,19 +665,6 @@ class ReviewController extends Controller{
                         exit(json_encode(array("error"=>$error)));
                 }
 
-                //查询订单时间
-                $orderObj = D("Order");	//在订单表中查询
-                $orderObj->create();
-                if(!$order_time = $orderObj->where('order_id='.$order_id)->getField('order_time')){
-
-                    //查询不到订单时间
-                    $error = 2;
-                    exit(json_encode(array("error"=>$error)));
-
-                }else{
-
-                    $data['order_time'] = $order_time;
-                }
 
                 //添加评论时间
                 $data['creation_time'] = $creation_time = date("Y-m-d H:i:s",time());

@@ -10,7 +10,7 @@
 </head>
 <body>
 
-<!-- 遮罩 -->
+<!-- 查看 -->
 <div id="rbox">
 
     <a class="go" href="#" onclick="return false;">关闭</a>
@@ -47,8 +47,8 @@
     <a class="go2" href="#" onclick="return false;">关闭</a>
     <form class="addform" action="__URL__/addReview/" method="post" enctype="multipart/form-data"> 
         
-        商品编码：<input type="text" name="product_id" value="3001001001"> <input id="randoidbtn" type="button" value="生成随机订单号"><input class="randoid" type="text" name="order_id" value="200100100"><br><br>
-        评论用户：<input type="text" name="member_name" value="tom"> <input id="randmidbtn" type="button" value="生成随机用户id"><input class="randmid" type="text" name="member_id" value="100100"><br><br>
+        商品编码：<input type="text" name="product_id"> <br><br>
+        评论用户：<input type="text" name="review_user" value="tom"> <input id="randmidbtn" type="button" value="生成随机用户id"><input class="randmid" type="text" name="member_id" value="100100"><br><br>
         评论图片：<input type="button" value="新增一张图片（最多添加 5 张）" id="addPic"><br><br>        
    
         <input class="upsize" type="hidden" name="MAX_FILE_SIZE" value="1000000">
@@ -63,22 +63,65 @@
         <input type="radio" name="score" value="5" />5分
         <br><br>
 
-        标签：<br>
-        <input type="checkbox" name="tag_name[]" value ="送货快" >送货快<br>
-        <input type="checkbox" name="tag_name[]" value ="新鲜">新鲜<br>
-        <input type="checkbox" name="tag_name[]" value ="口感好">口感好<br>
-        <br><br>
+        标签<br>
+        <volist name="tagType" id="vo" key="k" >
+            {$k}.{$vo}: <volist name="tagList" id="votaglist"><if condition="$votaglist['type'] eq  $k"><input type="radio" name="tag_name{$k}" value="{$votaglist.name}" />{$votaglist.name}</if></volist> <br><br>
+        </volist>
 
-        <!--<input type="hidden" name="order_id" value="200100100">-->
         <input type="hidden" name="sale_prop" value="testtttt">
 
         <input type="submit" value="保存">
     </form>
 </div>
+
+<!-- 回复 -->
+<div id="replybox">
+
+    <a class="go3" href="#" onclick="return false;">关闭</a>
+    订单编号：<span class="re_view-order-id"></span>
+    <table class="gridtable">
+        <thead>
+                <tr>
+                        <th>商品编码</th>
+                        <th>商品名称</th>
+                        <th>评论时间</th>
+                        <th>评论用户</th>
+                        <th>晒单图片</th>
+                        <th>评论内容</th>
+                        <th>评分</th>
+                        <th>标签</th>
+                        <th>评论回复</th>
+                </tr>
+        </thead>
+        <tbody align="center">
+                <tr>
+                    <td class="re_product_id"></td>
+                    <td class="re_sale_prop"></td>
+                    <td class="re_creation_time"></td>
+                    <td class="re_member_id"></td>
+                    <td class="re_url"></td>
+                    <td class="re_comment"></td>
+                    <td class="re_score"></td>
+                    <td class="re_tag"></td>
+                    <td>
+                        <form action="__URL__/setReply" method="post">
+                            <input class="re_review_id" type="hidden" name="re_review_id" />
+                            <textarea class="replycon" name="reply"></textarea><br><br>
+                            <!--<input type="text" name="reply">-->
+                            <input type="submit" value="回复评论" />
+                        </form>
+                    </td>
+                </tr>
+        </tbody>
+    </table>
+ </div>
+
 <div id="mask"></div>
-    
+
+
+<!--主界面-->    
 评论查询：
-<form action="__URL__/getList/" method="post">
+<form action="__URL__/getList/" method="get">
 评论时间：<input type="date" name="start_date"> 至 <input type="date" name="end_date">
 商品编码：<input type="text" name="product_id">
 订单编号：<input type="text" name="order_id"><br><br>
@@ -86,7 +129,7 @@
 </form><br><br><a class="add" href="#" onclick="return false">新增评价</a>
 <br><br>
 评论列表（共有<font color="red">{$count}</font>条数据）<br><br>
-<table class="gridtable">
+<table id="maintable" class="gridtable">
 	<thead>
 		<tr>
 			<th>订单编号</th>
@@ -103,17 +146,23 @@
 	<tbody id="admin_role_list" align="center">
 	   <volist name="list" id="vo">
 		<tr class="{$vo.review_id}">
-			<td>{$vo.order_id}</td>
+			<td class="oid">{$vo.order_id}</td>
 			<td>{$vo.product_id}</td>
-			<td>{$vo.sale_prop}</td>
+			<td>{$vo.name}</td>
 			<td>{$vo.creation_time}</td>
                         <td>
                              <if condition="($vo.url != '') ">
-                            <img src="{$fasfdfsurl}{$vo.url}" width="100">
+                             <img src="{$fasfdfsurl}{$vo.url}" width="100">
                              </if>
                         </td>
 			<td>{$vo.comment}</td>
-			<td>{$vo.member_id}</td>
+			<td>
+                            <if condition="$vo.order_id eq 0"><!--管理员后台添加的评论没有订单号-->
+                                {$vo.review_user}
+                            <else />
+                                {$vo.nickname}
+                            </if>
+                        </td>
 			<td><span class="state">
                                 <if condition="($vo.is_enabled eq 1) ">
                                     <font color="green">启用</font>
@@ -131,7 +180,8 @@
                                 <else />
                                     <font color="red"> 取消置顶</font>
                                 </if>
-                            </span>
+                            </span>&nbsp;&nbsp;
+                            <span><a  class="reply" href="#" onclick="false">回复</a></span>
                         </td>
 		</tr>
 		</volist>
@@ -271,9 +321,10 @@ $(function(){
                   $(".view-order-id").html(item.order_id);
                 
                   $(".product_id").html(item.product_id);
-                  $(".sale_prop").html(item.sale_prop);
+                  $(".sale_prop").html(item.name);
                   $(".creation_time").html(item.creation_time);
-                  $(".member_id").html(item.member_id);
+                 
+                  if(item.review_user == ""){ $(".member_id").html(item.nickname);}else{ $(".member_id").html(item.review_user);}
                  
                   if(!item.url){
               
@@ -326,6 +377,12 @@ $(function(){
 
             $("#mask").hide();
             $("#addbox").hide();
+        });
+        
+        $(".go3").click(function(){
+
+            $("#mask").hide();
+            $("#replybox").hide();
         });
         
         //新增评论
@@ -428,8 +485,87 @@ $(function(){
            $(".randoid").val($Num);
         });      
         
-    });
-	
+    //管理员回复评论
+    $(".reply").click(function(){
+
+        if(window.screen.availHeight > $(document.body).outerHeight(true)){
+
+            //当屏幕可用工作区域的高度 > 浏览器当前窗口文档body的总高度 包括border padding margin时( 缩放时 )
+            $("#mask").show().css({"opacity":"0.5","width":"100%","height":window.screen.availHeight});
+        }else{
+
+            $("#mask").show().css({"opacity":"0.5","width":"100%","height":$(document.body).outerHeight(true)});
+        }            
+        $("#replybox").show();  
+
+        //每次点击查看之前先清除评论图片，避免多次重复appent
+        $(".re_url").html("");
+
+        review_id = $(this).parents("tr").attr("class");
+
+        //ajax
+        $.post(admin_url+"Review/getReview/",{
+
+                review_id:$(this).parents("tr").attr("class"),
+
+        },function(data,textStatus){
+
+            var dataObj=eval("("+data+")");
+
+            $.each(dataObj,function(idx,item){ 
+
+              $(".re_view-order-id").html(item.order_id);
+
+              $(".re_product_id").html(item.product_id);
+              $(".re_sale_prop").html(item.name);
+              $(".re_creation_time").html(item.creation_time);
+              if(item.review_user == ""){ $(".re_member_id").html(item.nickname);}else{ $(".re_member_id").html(item.review_user);}
+              $(".re_review_id").val(review_id);
+              $(".replycon").val(item.reply);    
+
+              if(!item.url){
+
+                $(".re_url").html("没有图片");
+              }else{
+
+               $img =$("<img src={$fasfdfsurl}"+item.url+" width=100><br><br>");
+               $img.appendTo($(".re_url"));
+              }
+              $(".re_comment").html(item.comment);
+              $(".re_score").html(item.score);
+
+              if(!item.tag_name){
+
+                  $(".re_tag").html("没有标签");
+              }else{
+
+                  $(".re_tag").html(item.tag_name);
+              }
+            });
+        });            
+    });    
+  
+
+    hebingRows(0);
+     
+ });
+
+//合并单元格（相同订单号）
+function hebingRows(col){
+    var trs = $("#maintable tr");
+    var rows = 1;
+    for(var i=trs.length;i>0;i--){
+        var cur = $($(trs[i]).find("td")[col]).text();
+        var next = $($(trs[i-1]).find("td")[col]).text();
+        if(cur==next){
+            rows++;
+            $($(trs[i]).find("td")[col]).remove();
+        } else {
+            $($(trs[i]).find("td")[col]).attr("rowspan",rows);
+            rows=1;
+        }
+    }
+}
 
 </script>
 </html>

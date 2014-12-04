@@ -6,6 +6,7 @@ use Admin\Common\Api\Api;
 class ReviewController extends Controller{
 
     private $api_url = "http://review.huangdi.com/";
+    private $tag_url = "http://chenkuanxin.catalog.com/";
 
     //获取后台评论列表
     public function getList(){
@@ -16,38 +17,67 @@ class ReviewController extends Controller{
         $page = $_GET['page'] == ""?1:$_GET['page'];
         $pageInfo = "perpage/".$perpage."/page/".$page."/";
 
-        if(!$_POST['submit']){  //列出所有评论
+        if(!$_GET['submit']){  //列出所有评论
 
-            $url = $this->api_url."Review/searchReview/".$pageInfo;
-            $res = Api::request($url);
+            //$url = $this->api_url."Review/searchReview/".$pageInfo;
+            $url_list = array(
+                
+                "list" => $this->api_url."/Review/searchReview/".$param.$pageInfo, //请求评论列表
+                "tagtype" => $this->tag_url."Tag/getTagType",                      //请求标签类型
+                "taglist" => $this->tag_url."Tag/searchTagList/",               //请求标签类型下相应列表
+            );   
+            
+            //$res = Api::request($url);
+            $res = Api::request($url_list);
+            //print_r($res);
         }else{  //查询评论
 
             $param = "";
-            if($_POST['start_date'] != "" && $_POST['end_date'] != ""){
+            if($_GET['start_date'] != "" && $_GET['end_date'] != ""){
 
-                $param .= "start_date/".$_POST['start_date']."/end_date/".$_POST['end_date']."/"; 
+                $param .= "start_date/".$_GET['start_date']."/end_date/".$_GET['end_date']."/"; 
             }
 
-            if($_POST['product_id'] != ""){
+            if($_GET['product_id'] != ""){
 
-                $param .= "product_id/".$_POST['product_id']."/";
+                $param .= "product_id/".$_GET['product_id']."/";
             }
 
-            if($_POST['order_id'] != ""){
+            if($_GET['order_id'] != ""){
 
-                $param .= "order_id/".$_POST['order_id']."/";
+                $param .= "order_id/".$_GET['order_id']."/";
             }
 
-            $url = $this->api_url."/Review/searchReview/".$param.$pageInfo;
-            $res = Api::request($url,$param);
-
+            //$url = $this->api_url."/Review/searchReview/".$param.$pageInfo;        
+            //$res = Api::request($url,$param);
+            $url_list = array(
+                
+                "list" => $this->api_url."/Review/searchReview/".$param.$pageInfo, //请求评论列表
+                "tagtype" => $this->tag_url."Tag/getTagType",   //请求标签类型
+            );   
+      //print_r($this->api_url."/Review/searchReview/".$param.$pageInfo);exit();      
+            $res = Api::request($url_list);
+           
         }
+        //print_r($res);exit();
         //分页
-        $P       = new \Think\Page($res[0]['count'],$perpage);      // 实例化分页类 传入总记录数和每页显示的记录数
+        $P       = new \Think\Page($res['list']['count'],$perpage);      // 实例化分页类 传入总记录数和每页显示的记录数
+ 
+        if($param){
+
+            foreach($param as $key=>$val){
+            
+                 $P->parameter   .=   "$key/".urlencode($val).'/';
+
+            }
+        }
+        
         $show       = $P->show();                                    // 分页显示输出	
 
-        $this->assign("count",$res[0]['count']);
-        $this->assign("list",$res[0]['list']);
+        $this->assign("count",$res['list']['count']);
+        $this->assign("list",$res['list']['list']);
+        $this->assign("tagType",$res['tagtype']);
+        $this->assign("tagList",$res['taglist']['data']);
         $this->assign("show",$show);
         $this->assign("fasfdfsurl","http://dfs1.chunbo.local:8080/");
         $this->display();		
@@ -78,14 +108,22 @@ class ReviewController extends Controller{
 
          $product_id = I("product_id");
          $order_id = I("order_id");
-         $member_name = I("member_name");
+         $review_user = I("review_user");
          $member_id = I("member_id");
 
          $comment = I("comment");
          $score = I("score");
          $tag_name = I("tag_name");
          $sale_prop = I("sale_prop");
-
+         
+         $priority = I("priority");
+    
+         //标签type固定 tag_name1,tag_name2,tag_name3,tag_name4
+         $tag_name[] = $tag_name1 = I("tag_name1"); 
+         $tag_name[] = $tag_name2 = I("tag_name2");
+         $tag_name[] = $tag_name3 = I("tag_name3");
+         $tag_name[] = $tag_name4 = I("tag_name4");
+         
          if(isset($_FILES["myfile"]) && !empty($_FILES["myfile"])){
 
             $file_name = $_FILES["myfile"]["tmp_name"]; //array
@@ -106,26 +144,21 @@ class ReviewController extends Controller{
                 }
             }
        //print_r($link);exit();
-
          }   
-
-         if($_POST['tag_name']!=""){ 
-
-             $tag_name = $_POST['tag_name']; 
-
-         }
 
          $param = array(
 
             "product_id" => $product_id,
             "order_id" => $order_id,
-            "member_name" => $member_name,
+            "review_user" => $review_user,
             "member_id" => $member_id,
 
             "comment" => $comment,
             "score" => $score,
             "tag_name" => $tag_name,
             "sale_prop" => $sale_prop,
+             
+            "priority" => $priority,
              
             'link' => $link,
         );
@@ -200,8 +233,35 @@ class ReviewController extends Controller{
         }                   
     }
         
+    //管理员评论
+    public function setReply(){
 
-    
+        $reply = I("reply");
+        $review_id = I("re_review_id");
+        $param = array(
+            "reply"=>$reply,
+            "review_id"=>$review_id
+        );           
+        $url = $this->api_url."Review/reply";
+        $type = "post";
+
+        $res = Api::request($url,$param,$type);
+//print_r($res);exit();
+        if($res[0]['flag'] == 1){
+
+             echo "回复成功";
+        }else if($res[0]['flag'] == 0){
+
+             echo "回复失败";
+        }else if($res[0]['error'] == 1){
+            
+            echo "管理员评论为空";
+        }else if($res[0]['error'] == 2){
+            
+            echo "用户评论不存在";
+        }                   
+    }
+
     
     
     
